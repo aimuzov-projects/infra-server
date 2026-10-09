@@ -1,0 +1,14 @@
+# Сайт Татьяны Шкатовой, репо aimuzov-projects/shkatova-site, на сервере /srv/shkatova-site.
+
+www.tatiana-shkatova.ru {
+	redir https://tatiana-shkatova.ru{uri} permanent
+}
+
+tatiana-shkatova.ru {
+	import common
+
+	# Пока на сайте заглушки вместо реальных данных -- в поиск не отдаём.
+	header X-Robots-Tag "noindex, nofollow"
+
+	reverse_proxy shkatova-site:80
+}
