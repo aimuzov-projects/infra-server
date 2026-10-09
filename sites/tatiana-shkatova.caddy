@@ -7,8 +7,5 @@ www.tatiana-shkatova.ru {
 tatiana-shkatova.ru {
 	import common
 
-	# Пока на сайте заглушки вместо реальных данных -- в поиск не отдаём.
-	header X-Robots-Tag "noindex, nofollow"
-
 	reverse_proxy shkatova-site:80
 }
