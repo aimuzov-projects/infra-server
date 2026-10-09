@@ -1,0 +1,35 @@
+# Единственный, кто слушает 80/443 на сервере. Проекты портов наружу не публикуют:
+# они цепляются к сети edge, а Caddy ходит к ним по имени контейнера.
+
+name: infra
+
+services:
+  caddy:
+    image: caddy:2.10-alpine
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - '80:80'
+      - '443:443'
+      - '443:443/udp'
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./sites:/etc/caddy/sites:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - edge
+    logging:
+      driver: json-file
+      options:
+        max-size: '5m'
+        max-file: '2'
+
+volumes:
+  caddy_data:
+  caddy_config:
+
+networks:
+  edge:
+    name: edge
+    external: true
