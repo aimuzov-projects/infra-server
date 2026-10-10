@@ -1,5 +1,6 @@
 # Единственный, кто слушает 80/443 на сервере. Проекты портов наружу не публикуют:
-# они цепляются к сети edge, а Caddy ходит к ним по имени контейнера.
+# они цепляются к сети edge, а Caddy ходит к ним по имени контейнера. Кому нужен выход
+# в интернет через VPN, цепляется ещё и к сети vpn (см. README).
 
 name: infra
 
@@ -25,6 +26,23 @@ services:
         max-size: '5m'
         max-file: '2'
 
+  # VPN-выход для проектов: HTTP-прокси vpn:3128 и SOCKS vpn:1080 в сети vpn.
+  # Конфиг собирает vpn/update.sh из подписки, сам файл в git не попадает.
+  vpn:
+    image: ghcr.io/xtls/xray-core:26.9.9
+    container_name: vpn
+    restart: unless-stopped
+    command: ['run', '-c', '/etc/xray/config.json']
+    volumes:
+      - ./vpn/config.json:/etc/xray/config.json:ro
+    networks:
+      - vpn
+    logging:
+      driver: json-file
+      options:
+        max-size: '5m'
+        max-file: '2'
+
 volumes:
   caddy_data:
   caddy_config:
@@ -32,4 +50,7 @@ volumes:
 networks:
   edge:
     name: edge
+    external: true
+  vpn:
+    name: vpn
     external: true

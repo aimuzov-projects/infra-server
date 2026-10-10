@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
-# Выкладка маршрутов: пушим main, сервер подтягивает его и перечитывает Caddyfile.
+# Выкладка маршрутов и VPN-выхода: пушим main, сервер подтягивает его, обновляет конфиг VPN
+# из подписки и перечитывает Caddyfile.
 # Битый конфиг до reload не доходит: Caddy продолжает работать со старым.
 set -euo pipefail
 
@@ -21,6 +22,10 @@ ssh "$HOST" 'set -e
 cd /srv/infra
 git pull --ff-only --quiet
 git log -1 --oneline
+vpn/update.sh
+systemctl link --quiet /srv/infra/vpn/vpn-update.service /srv/infra/vpn/vpn-update.timer
+systemctl daemon-reload
+systemctl enable --now --quiet vpn-update.timer
 docker compose up -d --quiet-pull
 docker exec caddy caddy validate --config /etc/caddy/Caddyfile
 docker exec caddy caddy reload --config /etc/caddy/Caddyfile'
