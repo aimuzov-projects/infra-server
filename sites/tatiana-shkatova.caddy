@@ -7,5 +7,14 @@ www.tatiana-shkatova.ru {
 tatiana-shkatova.ru {
 	import common
 
-	reverse_proxy shkatova-site:80
+	# Чат отвечает потоком (SSE): буфер прокси держал бы ответ до конца.
+	handle /api/* {
+		reverse_proxy shkatova-chat:8787 {
+			flush_interval -1
+		}
+	}
+
+	handle {
+		reverse_proxy shkatova-site:80
+	}
 }
