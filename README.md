@@ -42,7 +42,38 @@
 4. Добавить `sites/<project>.caddy` с `reverse_proxy <container_name>:<port>`, направить DNS домена
    на сервер и запустить `./deploy.sh`.
 
+## VPN-выход
+
+Сервер стоит в РФ, и часть внешних API (OpenRouter, Telegram) отсюда недоступна. Для этого есть
+контейнер `vpn`: Xray с HTTP-прокси `vpn:3128` и SOCKS `vpn:1080` на профиле "Всё и сразу" из
+подписки Alesha Vpnov. Маршруты и балансировщики профиля остаются как есть: российские адреса
+идут напрямую, остальное через европейские ноды, а если они лежат, через запасные цепочки.
+
+Проект пользуется им по желанию. В его compose:
+
+```yaml
+services:
+  app:
+    environment:
+      HTTPS_PROXY: http://vpn:3128
+      NODE_USE_ENV_PROXY: '1' # только для Node 24+: без этого fetch прокси не видит
+    networks:
+      - vpn
+
+networks:
+  vpn:
+    name: vpn
+    external: true
+```
+
+Конфиг Xray собирает `vpn/update.sh` из подписки (`VPN_SUBSCRIPTION_URL` в `/srv/infra/.env`).
+Его запускает `deploy.sh` и раз в сутки systemd-таймер `vpn-update.timer`. Проверка с сервера:
+
+```bash
+docker run --rm --network vpn curlimages/curl -sx http://vpn:3128 https://www.cloudflare.com/cdn-cgi/trace
+```
+
 ## Подготовка сервера с нуля
 
-Docker Engine из репозитория docker.com, `ufw allow 22/tcp, 80/tcp, 443`, затем
-`docker network create edge` и `git clone github-server-infra:aimuzov-projects/server-infra.git /srv/infra`.
+Docker Engine из репозитория docker.com, `apt install jq`, `ufw allow 22/tcp, 80/tcp, 443`, затем
+`docker network create edge`, `docker network create vpn`, `.env` по образцу `.env.example` и `git clone github-server-infra:aimuzov-projects/server-infra.git /srv/infra`.
