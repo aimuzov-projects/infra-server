@@ -16,7 +16,8 @@
 - Проекты не публикуют порты на хост. Они подключаются к внешней сети `edge`, Caddy ходит к ним
   по имени контейнера.
 - Проект не пишет за пределы своей папки. Какой домен куда идёт, знает только `sites/` этого репо.
-- Каждый репо тянется на сервер своим read-only deploy key.
+- Каждый приватный репо тянется на сервер своим read-only deploy key, публичный клонируется
+  по HTTPS.
 
 ## Выкладка
 
@@ -37,7 +38,7 @@ command="git -C /srv/infra pull --ff-only --quiet && /srv/infra/deploy/remote.sh
 
 1. В compose проекта: `name: <project>`, у сервиса уникальный `container_name`, сеть `edge`
    как `external: true`, без `ports:`.
-2. Deploy key на сервере:
+2. Deploy key на сервере (публичному репо не нужен, в шаге 3 тогда `https://github.com/...`):
 
    ```bash
    ssh projects 'ssh-keygen -q -t ed25519 -N "" -C "projects-server:<repo>" -f ~/.ssh/<repo> &&
