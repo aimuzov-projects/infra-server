@@ -20,9 +20,18 @@
 
 ## Выкладка
 
-```bash
-./deploy.sh
+Пуш в `main` запускает GitHub Actions: проверка shellcheck и `caddy validate`, затем вход по SSH
+на сервер. Там ключ привязан к [`deploy/remote.sh`](deploy/remote.sh): он подтягивает `main`,
+обновляет VPN-выход и применяет конфиг Caddy. Повторить выкладку без пуша:
+`gh workflow run deploy.yml`.
+
+Ключ в `authorized_keys` сервера ограничен одной командой:
+
 ```
+command="git -C /srv/infra pull --ff-only --quiet && /srv/infra/deploy/remote.sh",restrict ssh-ed25519 ... github-actions@server-infra
+```
+
+Приватная половина лежит в секрете `DEPLOY_SSH_KEY` репозитория.
 
 ## Новый проект
 
@@ -40,7 +49,7 @@
 3. Клонировать: `ssh projects git clone github-<repo>:aimuzov-projects/<repo>.git /srv/<project>`
    и поднять проект.
 4. Добавить `sites/<project>.caddy` с `reverse_proxy <container_name>:<port>`, направить DNS домена
-   на сервер и запустить `./deploy.sh`.
+   на сервер и запушить `main`.
 
 ## VPN-выход
 
@@ -67,7 +76,7 @@ networks:
 ```
 
 Конфиг Xray собирает `vpn/update.sh` из подписки (`VPN_SUBSCRIPTION_URL` в `/srv/infra/.env`).
-Его запускает `deploy.sh` и раз в сутки systemd-таймер `vpn-update.timer`. Проверка с сервера:
+Его запускает каждая выкладка и раз в сутки systemd-таймер `vpn-update.timer`. Проверка с сервера:
 
 ```bash
 docker run --rm --network vpn curlimages/curl -sx http://vpn:3128 https://www.cloudflare.com/cdn-cgi/trace
