@@ -1,0 +1,18 @@
+# Конвертер поручений, репо aimuzov-projects/prestige-logist, на сервере /srv/prestige-logist.
+
+logist.aimuzov.online {
+	import common
+
+	# Комплект поручения бывает до 20 МБ, API сам отвечает 413 сверх лимита.
+	request_body /api/* {
+		max_size 21MB
+	}
+
+	handle /api/* {
+		reverse_proxy prestige-logist-api:8787
+	}
+
+	handle {
+		reverse_proxy prestige-logist:80
+	}
+}
