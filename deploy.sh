@@ -20,6 +20,7 @@ fi
 git push --quiet origin main
 ssh "$HOST" 'set -e
 cd /srv/infra
+old=$(git rev-parse HEAD)
 git pull --ff-only --quiet
 git log -1 --oneline
 vpn/update.sh
@@ -27,5 +28,12 @@ systemctl link --quiet /srv/infra/vpn/vpn-update.service /srv/infra/vpn/vpn-upda
 systemctl daemon-reload
 systemctl enable --now --quiet vpn-update.timer
 docker compose up -d --quiet-pull
-docker exec caddy caddy validate --config /etc/caddy/Caddyfile
-docker exec caddy caddy reload --config /etc/caddy/Caddyfile'
+# Caddyfile смонтирован файлом, а git pull кладёт новый файл вместо старого: работающий
+# контейнер видит прежнюю версию, пока его не пересоздать. Папке sites/ хватает reload.
+# Проверяет конфиг одноразовый контейнер, он видит свежие файлы.
+docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
+if git diff --quiet "$old" HEAD -- Caddyfile; then
+	docker exec caddy caddy reload --config /etc/caddy/Caddyfile
+else
+	docker compose up -d --force-recreate --no-deps caddy
+fi'
