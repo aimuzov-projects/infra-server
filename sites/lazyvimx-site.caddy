@@ -1,0 +1,7 @@
+# Документация lazyvimx, репо lazyvimx/site, на сервере /srv/lazyvimx-site.
+
+lazyvimx.aimuzov.online {
+	import common
+
+	reverse_proxy lazyvimx-site:80
+}
