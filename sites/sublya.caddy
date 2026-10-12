@@ -1,0 +1,23 @@
+# Сабля: сайт из репо sublya/site (/srv/sublya-site) и Mini App-админка бота
+# из sublya/bot (/srv/sublya-bot), оба на одном домене.
+
+sublya.aimuzov.online {
+	import common
+
+	# Веб-Telegram открывает админку в своём iframe: вместо SAMEORIGIN из common тут список
+	# источников. defer, иначе заголовок из common вернётся после удаления.
+	@admin path /admin /admin/*
+	header @admin {
+		-X-Frame-Options
+		Content-Security-Policy "frame-ancestors https://web.telegram.org https://*.telegram.org"
+		defer
+	}
+
+	handle @admin {
+		reverse_proxy sublya-tunnel:8090
+	}
+
+	handle {
+		reverse_proxy sublya-site:80
+	}
+}
