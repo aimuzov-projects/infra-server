@@ -8,6 +8,10 @@
 		X-Content-Type-Options nosniff
 		Referrer-Policy strict-origin-when-cross-origin
 		X-Frame-Options SAMEORIGIN
+		# Год только по HTTPS. Без includeSubDomains: у доменов бывают поддомены не отсюда.
+		Strict-Transport-Security "max-age=31536000"
+		# Сайтам с сервера не нужны камера, микрофон, геолокация и оплата.
+		Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
 	}
 }
 
