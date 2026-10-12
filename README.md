@@ -1,4 +1,4 @@
-# server-infra
+# infra-server
 
 Общий Caddy для сервера с проектами (`ssh projects`, 185.219.43.208). Держит 80/443, выпускает
 сертификаты и раскидывает домены по контейнерам проектов.
@@ -7,9 +7,12 @@
 
 ```
 /srv/
-  infra/            ← этот репо
+  infra-server/     ← этот репо
   <project>/        ← клон репо проекта, там же собирается и запускается
 ```
+
+- Репо называются `<пространство>-<проект>`: `infra-server`, `infra-template-site`,
+  `shkatova-site`, `sublya-bot`. Папка на сервере повторяет имя репо.
 
 - Один проект — одна папка `/srv/<project>` и один compose-проект с явным `name:`. Контейнеры,
   тома и сети получают префикс проекта, поэтому проекты не пересекаются.
@@ -29,7 +32,7 @@
 Ключ в `authorized_keys` сервера ограничен одной командой:
 
 ```
-command="git -C /srv/infra pull --ff-only --quiet && /srv/infra/deploy/remote.sh",restrict ssh-ed25519 ... github-actions@server-infra
+command="git -C /srv/infra-server pull --ff-only --quiet && /srv/infra-server/deploy/remote.sh",restrict ssh-ed25519 ... github-actions@infra-server
 ```
 
 Приватная половина лежит в секрете `DEPLOY_SSH_KEY` репозитория.
@@ -76,7 +79,7 @@ networks:
     external: true
 ```
 
-Конфиг Xray собирает `vpn/update.sh` из подписки (`VPN_SUBSCRIPTION_URL` в `/srv/infra/.env`).
+Конфиг Xray собирает `vpn/update.sh` из подписки (`VPN_SUBSCRIPTION_URL` в `/srv/infra-server/.env`).
 Его запускает каждая выкладка и раз в сутки systemd-таймер `vpn-update.timer`. Проверка с сервера:
 
 ```bash
@@ -86,4 +89,4 @@ docker run --rm --network vpn curlimages/curl -sx http://vpn:3128 https://www.cl
 ## Подготовка сервера с нуля
 
 Docker Engine из репозитория docker.com, `apt install jq`, `ufw allow 22/tcp, 80/tcp, 443`, затем
-`docker network create edge`, `docker network create vpn`, `.env` по образцу `.env.example` и `git clone github-server-infra:aimuzov-projects/server-infra.git /srv/infra`.
+`docker network create edge`, `docker network create vpn`, `.env` по образцу `.env.example` и `git clone github-infra-server:aimuzov-projects/infra-server.git /srv/infra-server`.

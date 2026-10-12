@@ -6,7 +6,7 @@ set -euo pipefail
 
 # Тело в блоке: bash дочитает его целиком до того, как git pull подменит этот файл.
 {
-	cd /srv/infra
+	cd /srv/infra-server
 
 	# Два пуша подряд не должны выкладываться одновременно: второй ждёт первого.
 	exec 9>/tmp/infra-deploy.lock
@@ -16,7 +16,7 @@ set -euo pipefail
 	git log -1 --oneline
 
 	vpn/update.sh
-	systemctl link --quiet /srv/infra/vpn/vpn-update.service /srv/infra/vpn/vpn-update.timer
+	systemctl link --quiet /srv/infra-server/vpn/vpn-update.service /srv/infra-server/vpn/vpn-update.timer
 	systemctl daemon-reload
 	systemctl enable --now --quiet vpn-update.timer
 
