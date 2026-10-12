@@ -19,8 +19,8 @@
 - Проекты не публикуют порты на хост. Они подключаются к внешней сети `edge`, Caddy ходит к ним
   по имени контейнера.
 - Проект не пишет за пределы своей папки. Какой домен куда идёт, знает только `sites/` этого репо.
-- Каждый приватный репо тянется на сервер своим read-only deploy key, публичный клонируется
-  по HTTPS.
+- Каждый репо, публичный тоже, тянется на сервер по SSH своим read-only deploy key. В
+  организации репо должны быть разрешены deploy keys (`deploy_keys_enabled_for_repositories`).
 
 ## Выкладка
 
@@ -41,16 +41,16 @@ command="git -C /srv/infra-server pull --ff-only --quiet && /srv/infra-server/de
 
 1. В compose проекта: `name: <project>`, у сервиса уникальный `container_name`, сеть `edge`
    как `external: true`, без `ports:`.
-2. Deploy key на сервере (публичному репо не нужен, в шаге 3 тогда `https://github.com/...`):
+2. Deploy key на сервере:
 
    ```bash
-   ssh projects 'ssh-keygen -q -t ed25519 -N "" -C "projects-server:<repo>" -f ~/.ssh/<repo> &&
-     printf "Host github-<repo>\n\tHostName github.com\n\tUser git\n\tIdentityFile ~/.ssh/<repo>\n\tIdentitiesOnly yes\n\n" >> ~/.ssh/config &&
-     cat ~/.ssh/<repo>.pub'
+   ssh projects 'ssh-keygen -q -t ed25519 -N "" -C "projects-server:<project>" -f ~/.ssh/<project> &&
+     printf "Host github-<project>\n\tHostName github.com\n\tUser git\n\tIdentityFile ~/.ssh/<project>\n\tIdentitiesOnly yes\n\n" >> ~/.ssh/config &&
+     cat ~/.ssh/<project>.pub'
    ```
 
-   Публичный ключ добавить в репо: `gh repo deploy-key add key.pub -R aimuzov-projects/<repo>`.
-3. Клонировать: `ssh projects git clone github-<repo>:aimuzov-projects/<repo>.git /srv/<project>`
+   Публичный ключ добавить в репо: `gh repo deploy-key add key.pub -R <org>/<repo> --title projects-server`.
+3. Клонировать: `ssh projects git clone github-<project>:<org>/<repo>.git /srv/<project>`
    и поднять проект.
 4. Добавить `sites/<project>.caddy` с `reverse_proxy <container_name>:<port>`, направить DNS домена
    на сервер и запушить `main`.
