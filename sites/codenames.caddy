@@ -3,8 +3,8 @@
 codenames.aimuzov.online {
 	import common
 
-	# Сканер QR в игре снимает код камерой, а общий сниппет её запрещает. Заголовок ниже
-	# выполняется после сниппета и перезаписывает его.
+	# Сканер QR в игре снимает код камерой, а общий сниппет её запрещает. Свой заголовок
+	# сниппет не трогает (см. «?» в Caddyfile).
 	header Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=()"
 
 	# Релей онлайн-комнат на WebSocket: апгрейд соединения reverse_proxy пропускает сам.
