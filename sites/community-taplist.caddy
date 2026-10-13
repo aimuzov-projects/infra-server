@@ -1,0 +1,24 @@
+# Таплист бара, репо aimuzov-projects/community-taplist, на сервере /srv/community-taplist.
+
+taplist.aimuzov.online {
+	import common
+
+	# Табло на телевизорах открыты без пароля, а редактор и сохранение списка -- только барменам.
+	@editor expression path("/editor*") || (method("PUT") && path("/api/items"))
+	basic_auth @editor {
+		admin ***REMOVED***
+	}
+
+	# Редактор шлёт весь список с обложками до 16 МБ, API сам отвечает 413 сверх лимита.
+	request_body /api/* {
+		max_size 17MB
+	}
+
+	handle /api/* {
+		reverse_proxy community-taplist-api:8787
+	}
+
+	handle {
+		reverse_proxy community-taplist:80
+	}
+}
