@@ -1,0 +1,18 @@
+# Игра Codenames, репо aimuzov-projects/codenames, на сервере /srv/codenames.
+
+codenames.aimuzov.online {
+	import common
+
+	# Сканер QR в игре снимает код камерой, а общий сниппет её запрещает. Заголовок ниже
+	# выполняется после сниппета и перезаписывает его.
+	header Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=()"
+
+	# Релей онлайн-комнат на WebSocket: апгрейд соединения reverse_proxy пропускает сам.
+	handle /ws* {
+		reverse_proxy codenames-relay:8787
+	}
+
+	handle {
+		reverse_proxy codenames:80
+	}
+}
