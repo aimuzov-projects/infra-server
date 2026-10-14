@@ -202,7 +202,8 @@ docker run --rm --network vpn curlimages/curl -sx http://vpn:3128 https://www.cl
    `chezmoi_<version>_linux_amd64.deb` из [релизов chezmoi](https://github.com/twpayne/chezmoi/releases),
    сверив его с `checksums.txt`, затем
    `chezmoi init --apply --recurse-submodules=false https://github.com/aimuzov/dotfiles.git`.
-   Обновление: `chezmoi update --recurse-submodules=false`.
+   Дальше каждый деплой этого репо делает `chezmoi update`, так что правки dotfiles приезжают
+   со следующим деплоем (или `gh workflow run deploy.yml`).
 
 ## Лицензия
 
