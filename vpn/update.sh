@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
-# Собирает vpn/config.json для Xray из подписки Alesha Vpnov и перезапускает
-# контейнер vpn, если конфиг поменялся. Берём профиль "Всё и сразу" как есть:
-# у него свои балансировщики и цепочка запасных нод, если основные не отвечают.
-# Меняем только адреса прокси, чтобы до них дотягивались контейнеры из сети vpn.
+# Builds vpn/config.json for Xray from the Alesha Vpnov subscription and restarts
+# the vpn container if the config changed. The "Всё и сразу" profile is taken as is:
+# it has its own balancers and fallback nodes for when the main ones are down.
+# We only drop metadata, quiet the log and move the proxies to 0.0.0.0 on fixed ports,
+# so that containers on the vpn network can reach them.
 set -euo pipefail
 
 cd "$(dirname "$0")"
 
 # shellcheck source=/dev/null
 [[ -f ../.env ]] && source ../.env
-: "${VPN_SUBSCRIPTION_URL:?VPN_SUBSCRIPTION_URL не задан, см. .env.example}"
+: "${VPN_SUBSCRIPTION_URL:?VPN_SUBSCRIPTION_URL is not set, see .env.example}"
 
 sub="$(mktemp)"
 next="$(mktemp)"
@@ -19,7 +20,7 @@ curl -fsS --max-time 30 -o "$sub" "$VPN_SUBSCRIPTION_URL"
 
 jq '
 	first(.[] | select(.remarks | test("Всё и сразу")))
-	// error("в подписке нет профиля \"Всё и сразу\"")
+	// error("no \"Всё и сразу\" profile in the subscription")
 	| del(.remarks, .meta)
 	| .log = {loglevel: "warning"}
 	| .inbounds |= map(
@@ -29,16 +30,16 @@ jq '
 	)
 ' "$sub" >"$next"
 
-# Подписка при каждом запросе выдаёт ноде другой serverName, так что таймер почти
-# всегда перезапускает контейнер. Это пара секунд без прокси раз в сутки.
+# The subscription gives a node a different serverName on every request, so the timer
+# almost always restarts the container. That's a couple of seconds without a proxy once a day.
 if cmp -s "$next" config.json; then
-	echo "vpn: конфиг не изменился ($(jq '[.outbounds[] | select(.protocol == "vless")] | length' config.json) нод)"
+	echo "vpn: config unchanged ($(jq '[.outbounds[] | select(.protocol == "vless")] | length' config.json) nodes)"
 	exit 0
 fi
 
-# Xray в контейнере работает не от root, ему нужно право на чтение.
+# Xray in the container doesn't run as root, so it needs read permission.
 install -m 644 "$next" config.json
-echo "vpn: конфиг обновлён ($(jq '[.outbounds[] | select(.protocol == "vless")] | length' config.json) нод)"
+echo "vpn: config updated ($(jq '[.outbounds[] | select(.protocol == "vless")] | length' config.json) nodes)"
 
 if docker compose ps --status running --services 2>/dev/null | grep -qx vpn; then
 	docker compose restart vpn
