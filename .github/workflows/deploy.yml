@@ -3,7 +3,7 @@ name: Deploy
 on:
   push:
     branches: [main]
-  # Only the checks: deploy is skipped, and fork PRs don't get secrets anyway.
+  # Только проверки: деплой пропускается, да и PR из форков секретов всё равно не получают.
   pull_request:
   workflow_dispatch:
 
@@ -17,8 +17,8 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: shellcheck deploy/remote.sh deploy/site.sh deploy/site-build.sh vpn/update.sh
-      # Same image as in compose.yml, so a broken config never reaches the server.
-      # The hash is a throwaway one: the real secret lives only in the server's .env.
+      # Тот же образ, что в compose.yml, чтобы сломанный конфиг не доехал до сервера.
+      # Хеш одноразовый: настоящий секрет живёт только в .env на сервере.
       - run: >-
           docker run --rm
           -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro"
@@ -30,16 +30,16 @@ jobs:
   deploy:
     needs: check
     if: github.event_name != 'pull_request'
-    # Deploys run one at a time, a new one doesn't cut off one already in progress.
-    # The queue is per job, so PR checks don't wait behind a deploy.
+    # Деплои идут по одному, новый не обрывает уже запущенный.
+    # Очередь на уровне джобы, поэтому проверки PR не ждут, пока закончится деплой.
     concurrency:
       group: deploy
       cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      # The server knows what to do: the key in authorized_keys is bound to deploy/remote.sh,
-      # so we don't pass a command to ssh.
+      # Сервер сам знает, что делать: ключ в authorized_keys привязан к deploy/remote.sh,
+      # поэтому команду в ssh не передаём.
       - name: Deploy on server
         env:
           SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}

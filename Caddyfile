@@ -1,4 +1,4 @@
-# Each site lives in its own file under sites/, only the shared bits go here.
+# Каждый сайт живёт в своём файле в sites/, здесь только общее.
 
 (common) {
 	encode zstd gzip
@@ -8,11 +8,11 @@
 		X-Content-Type-Options nosniff
 		Referrer-Policy strict-origin-when-cross-origin
 		X-Frame-Options SAMEORIGIN
-		# HTTPS only for a year. No includeSubDomains: some subdomains aren't served from here.
+		# Только HTTPS на год. Без includeSubDomains: часть поддоменов обслуживается не отсюда.
 		Strict-Transport-Security "max-age=31536000"
-		# Sites here don't need camera, mic, geolocation or payments. "?" sets it only if the site
-		# hasn't set its own: the block is deferred because of -Server, so otherwise it would
-		# overwrite the site's header.
+		# Камера, микрофон, геолокация и платежи здешним сайтам не нужны. "?" выставляет
+		# заголовок, только если сайт не задал свой. Дело в том что из-за -Server блок
+		# отложенный, и без "?" он перетёр бы заголовок сайта.
 		?Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
 	}
 }

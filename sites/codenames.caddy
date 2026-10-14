@@ -1,13 +1,13 @@
-# Codenames game, repo aimuzov-projects/codenames, on the server in /srv/codenames.
+# Игра Codenames, репо aimuzov-projects/codenames, на сервере в /srv/codenames.
 
 codenames.aimuzov.online {
 	import common
 
-	# The in-game QR scanner needs the camera, and the shared snippet blocks it. The snippet
-	# leaves a site's own header alone (see "?" in Caddyfile).
+	# QR-сканеру в игре нужна камера, а общий сниппет её запрещает. Собственный заголовок
+	# сайта сниппет не перетирает (см. "?" в Caddyfile).
 	header Permissions-Policy "camera=(self), microphone=(), geolocation=(), payment=()"
 
-	# Online rooms relay over WebSocket: reverse_proxy passes the upgrade through by itself.
+	# Онлайн-комнаты ходят через WebSocket, upgrade reverse_proxy пробрасывает сам.
 	handle /ws* {
 		reverse_proxy codenames-relay:8787
 	}

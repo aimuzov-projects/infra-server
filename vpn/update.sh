@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
-# Builds vpn/config.json for Xray from the Alesha Vpnov subscription and restarts
-# the vpn container if the config changed. The "Всё и сразу" profile is taken as is:
-# it has its own balancers and fallback nodes for when the main ones are down.
-# We only drop metadata, quiet the log and move the proxies to 0.0.0.0 on fixed ports,
-# so that containers on the vpn network can reach them.
+# Собирает vpn/config.json для Xray из подписки Alesha Vpnov и перезапускает
+# контейнер vpn, если конфиг поменялся. Профиль "Всё и сразу" берём как есть:
+# в нём свои балансировщики и запасные ноды на случай, если основные лежат.
+# Мы только выкидываем метаданные, приглушаем лог и переносим прокси на 0.0.0.0
+# с фиксированными портами, чтобы до них достучались контейнеры из сети vpn.
 set -euo pipefail
 
 cd "$(dirname "$0")"
@@ -30,14 +30,14 @@ jq '
 	)
 ' "$sub" >"$next"
 
-# The subscription gives a node a different serverName on every request, so the timer
-# almost always restarts the container. That's a couple of seconds without a proxy once a day.
+# Подписка на каждый запрос отдаёт ноде другой serverName, поэтому таймер почти всегда
+# перезапускает контейнер. Это пара секунд без прокси раз в сутки.
 if cmp -s "$next" config.json; then
 	echo "vpn: config unchanged ($(jq '[.outbounds[] | select(.protocol == "vless")] | length' config.json) nodes)"
 	exit 0
 fi
 
-# Xray in the container doesn't run as root, so it needs read permission.
+# Xray в контейнере работает не от root, поэтому ему нужно право на чтение.
 install -m 644 "$next" config.json
 echo "vpn: config updated ($(jq '[.outbounds[] | select(.protocol == "vless")] | length' config.json) nodes)"
 
