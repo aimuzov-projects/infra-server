@@ -54,9 +54,9 @@ set -euo pipefail
 		docker compose up -d --force-recreate --no-deps caddy
 	fi
 
-	# Root's fish comes from the dotfiles through chezmoi, and every deploy pulls their
-	# changes. It goes last: a failure here can't keep Caddy from its update, but it fails
-	# the deploy, so it doesn't go unnoticed. Without the private submodules, as at setup.
+	# fish у root приезжает из dotfiles через chezmoi, и каждый деплой подтягивает их
+	# изменения. Идёт последним: упавший шаг не помешает Caddy обновиться, но уронит
+	# деплой, так что незамеченным не останется. Без приватных сабмодулей, как при установке.
 	if command -v chezmoi >/dev/null; then
 		chezmoi update --no-tty --recurse-submodules=false
 	fi
