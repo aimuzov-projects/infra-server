@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Выкладка на самом сервере: подтянуть main, обновить VPN-выход и применить конфиг Caddy.
-# Её вызывают GitHub Actions на каждый пуш в main и при ручном запуске workflow.
-# Для ключа из Actions это единственная разрешённая команда (command= в authorized_keys).
+# Deploy on the server itself: pull main, update the VPN egress and apply the Caddy config.
+# GitHub Actions runs it on every push to main and on a manual workflow run.
+# It's the only command allowed for the Actions key (command= in authorized_keys).
 set -euo pipefail
 
-# Тело в блоке: bash дочитает его целиком до того, как git pull подменит этот файл.
+# The body is a block: bash reads it whole before git pull replaces this file.
 {
 	cd /srv/infra-server
 
-	# Два пуша подряд не должны выкладываться одновременно: второй ждёт первого.
+	# Two pushes in a row must not deploy at the same time: the second waits for the first.
 	exec 9>/tmp/infra-deploy.lock
 	flock 9
 
@@ -20,14 +20,16 @@ set -euo pipefail
 	systemctl daemon-reload
 	systemctl enable --now --quiet vpn-update.timer
 
-	docker compose up -d --quiet-pull
-
-	# Битый конфиг дальше проверки не идёт: Caddy продолжает работать со старым.
-	# Проверяет одноразовый контейнер, он видит свежие файлы.
+	# A broken config stops here and Caddy keeps running the old one. The check goes before
+	# up -d, which recreates Caddy whenever its service in compose.yml changes. It runs in a
+	# throwaway container because that one sees the fresh files.
 	docker compose run --rm --no-deps caddy caddy validate --config /etc/caddy/Caddyfile
 
-	# Caddyfile смонтирован файлом, а git pull кладёт новый файл вместо старого: работающий
-	# контейнер видит прежнюю версию, пока его не пересоздать. Папке sites/ хватает reload.
+	docker compose up -d --quiet-pull
+
+	# Caddyfile is mounted as a single file, and git pull puts a new file in place of the old
+	# one: the running container sees the previous version until it's recreated. The sites/
+	# directory is fine with a reload.
 	if docker exec caddy cat /etc/caddy/Caddyfile | cmp -s - Caddyfile; then
 		docker exec caddy caddy reload --config /etc/caddy/Caddyfile
 	else
