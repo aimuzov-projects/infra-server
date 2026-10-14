@@ -198,6 +198,12 @@ docker run --rm --network vpn curlimages/curl -sx http://vpn:3128 https://www.cl
 4. Deploy key for this repo (see [Adding a project](#adding-a-project)), then
    `git clone github-infra-server:aimuzov-projects/infra-server.git /srv/infra-server`.
 5. `/srv/infra-server/.env` from [`.env.example`](.env.example), then run `deploy/remote.sh` once.
+6. Shell: root gets fish from [dotfiles](https://github.com/aimuzov/dotfiles/blob/main/docs/fish/README.md#linux-server),
+   bash stays the login shell and an interactive SSH login switches to fish. Install the
+   `chezmoi_<version>_linux_amd64.deb` from [chezmoi releases](https://github.com/twpayne/chezmoi/releases)
+   after checking it against `checksums.txt`, then
+   `chezmoi init --apply --recurse-submodules=false https://github.com/aimuzov/dotfiles.git`.
+   Updates: `chezmoi update --recurse-submodules=false`.
 
 ## License
 
