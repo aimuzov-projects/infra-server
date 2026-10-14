@@ -48,7 +48,8 @@ Caddyfile                 shared snippet (compression, security headers) + impor
 sites/<project>.caddy     one file per site: domain → container
 compose.yml               caddy and vpn services
 deploy/remote.sh          deploy script, runs on the server
-deploy/site.sh            deploy script of every site, runs on the server
+deploy/site.sh            deploy of every site: starts site-deploy@<project> and shows its log
+deploy/site-build.sh      the build itself, inside site-deploy@.service
 vpn/update.sh             builds the Xray config from the subscription
 vpn/vpn-update.{service,timer}   daily config refresh
 docker/docker-prune.{service,timer}   weekly cleanup of the Docker build cache
@@ -71,8 +72,11 @@ docker/docker-prune.{service,timer}   weekly cleanup of the Docker build cache
   container name.
 - A project never writes outside its folder.
 - Sites deploy with one script, [`deploy/site.sh`](deploy/site.sh), the key of a site runs it with
-  the project name. Its lock `/tmp/sites-deploy.lock` lets the server build one site at a time, so
-  a merge into several repos at once doesn't build them in parallel on the small server.
+  the project name. The build runs in the systemd unit `site-deploy@<project>`, so a dropped SSH
+  connection doesn't stop it, and `site.sh` streams its log to Actions. The lock
+  `/tmp/sites-deploy.lock` lets the server build one site at a time, so a merge into several repos
+  at once doesn't build them in parallel on the small server. The log of the last deploys:
+  `journalctl -u site-deploy@<project>`.
 - Every repo, public ones included, is pulled over SSH with its own read-only deploy key. Deploy
   keys must be enabled for the organization (`deploy_keys_enabled_for_repositories`).
 

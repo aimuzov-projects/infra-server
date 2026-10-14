@@ -18,6 +18,7 @@ set -euo pipefail
 	vpn/update.sh
 	systemctl link --quiet /srv/infra-server/vpn/vpn-update.service /srv/infra-server/vpn/vpn-update.timer
 	systemctl link --quiet /srv/infra-server/docker/docker-prune.service /srv/infra-server/docker/docker-prune.timer
+	systemctl link --quiet /srv/infra-server/deploy/site-deploy@.service
 	systemctl daemon-reload
 	systemctl enable --now --quiet vpn-update.timer docker-prune.timer
 

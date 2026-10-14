@@ -48,7 +48,8 @@ Caddyfile                 общий сниппет (сжатие, заголо�
 sites/<project>.caddy     по файлу на сайт: домен → контейнер
 compose.yml               сервисы caddy и vpn
 deploy/remote.sh          выкладка, выполняется на сервере
-deploy/site.sh            выкладка любого сайта, выполняется на сервере
+deploy/site.sh            выкладка любого сайта: запускает site-deploy@<project> и показывает его лог
+deploy/site-build.sh      сама сборка, внутри site-deploy@.service
 vpn/update.sh             собирает конфиг Xray из подписки
 vpn/vpn-update.{service,timer}   обновление конфига раз в сутки
 docker/docker-prune.{service,timer}   чистка кэша сборки Docker раз в неделю
@@ -70,8 +71,10 @@ docker/docker-prune.{service,timer}   чистка кэша сборки Docker 
 - Проекты не публикуют порты на хост. Они подключаются к внешней сети `edge`, Caddy ходит к ним
   по имени контейнера.
 - Сайты выкладываются одним скриптом, [`deploy/site.sh`](deploy/site.sh), ключ сайта запускает его
-  с именем проекта. Его lock `/tmp/sites-deploy.lock` даёт серверу собирать по одному сайту, поэтому
-  мерж сразу в несколько репо не собирает их параллельно на маленьком сервере.
+  с именем проекта. Сборка идёт в systemd-юните `site-deploy@<project>`, поэтому обрыв SSH её не
+  останавливает, а `site.sh` транслирует её лог в Actions. Lock `/tmp/sites-deploy.lock` даёт серверу
+  собирать по одному сайту, поэтому мерж сразу в несколько репо не собирает их параллельно на
+  маленьком сервере. Лог последних выкладок: `journalctl -u site-deploy@<project>`.
 - Каждый репо, публичный тоже, тянется на сервер по SSH своим read-only deploy key. В
   организации должны быть разрешены deploy keys (`deploy_keys_enabled_for_repositories`).
 
