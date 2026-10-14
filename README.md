@@ -1,47 +1,124 @@
+<div align="center">
+
 # infra-server
 
-Общий Caddy для сервера с проектами (`ssh projects`, 185.219.43.208). Держит 80/443, выпускает
-сертификаты и раскидывает домены по контейнерам проектов.
+Shared Caddy front door and VPN egress for a small self-hosted projects server.
 
-## Как устроен сервер
+[![Deploy](https://github.com/aimuzov-projects/infra-server/actions/workflows/deploy.yml/badge.svg)](https://github.com/aimuzov-projects/infra-server/actions/workflows/deploy.yml)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+![Caddy 2.10](https://img.shields.io/badge/Caddy-2.10-1f88c0?logo=caddy&logoColor=white)
+![Xray](https://img.shields.io/badge/Xray-26.9-555)
+![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ed?logo=docker&logoColor=white)
+
+**English** · [Русский](README.ru.md)
+
+</div>
+
+---
+
+One Caddy owns ports 80/443 on the server, issues TLS certificates and routes each domain to its
+project's container. Projects never publish ports and never touch each other: the only place
+that knows which domain goes where is [`sites/`](sites).
+
+```mermaid
+flowchart LR
+    user([Internet]) -->|80 / 443| caddy[Caddy]
+    subgraph server[projects server]
+        caddy -->|network edge| apps[project containers]
+        apps -.->|network vpn, optional| vpn[Xray proxy]
+    end
+    vpn -.-> api([OpenRouter, Telegram, ...])
+```
+
+## Sites
+
+| Domain | Project | Containers |
+| --- | --- | --- |
+| [tatiana-shkatova.ru](https://tatiana-shkatova.ru) | [aimuzov-projects/shkatova-psychologist](https://github.com/aimuzov-projects/shkatova-psychologist) | `shkatova-psychologist`, `shkatova-chat` |
+| [taplist.aimuzov.online](https://taplist.aimuzov.online) | [aimuzov-projects/community-taplist](https://github.com/aimuzov-projects/community-taplist) | `community-taplist`, `community-taplist-api` |
+| [codenames.aimuzov.online](https://codenames.aimuzov.online) | [aimuzov-projects/codenames](https://github.com/aimuzov-projects/codenames) | `codenames`, `codenames-relay` |
+| [logist.aimuzov.online](https://logist.aimuzov.online) | [aimuzov-projects/prestige-logist](https://github.com/aimuzov-projects/prestige-logist) | `prestige-logist`, `prestige-logist-api` |
+| [sublya.aimuzov.online](https://sublya.aimuzov.online) | [sublya/site](https://github.com/sublya/site), [sublya/bot](https://github.com/sublya/bot) | `sublya-site`, `sublya-tunnel` |
+| [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online) | [lazyvimx/site](https://github.com/lazyvimx/site) | `lazyvimx-site` |
+
+## Repository layout
+
+```
+Caddyfile                 shared snippet (compression, security headers) + import of sites/
+sites/<project>.caddy     one file per site: domain → container
+compose.yml               caddy and vpn services
+deploy/remote.sh          deploy script, runs on the server
+vpn/update.sh             builds the Xray config from the subscription
+vpn/vpn-update.{service,timer}   daily config refresh
+.env.example              secrets template (the real .env lives only on the server)
+```
+
+## Server conventions
 
 ```
 /srv/
-  infra-server/     ← этот репо
-  <project>/        ← клон репо проекта, там же собирается и запускается
+  infra-server/     ← this repo
+  <project>/        ← clone of the project repo, built and run in place
 ```
 
-- Репо называются `<пространство>-<проект>`: `infra-server`, `infra-template-site`,
-  `shkatova-psychologist`, `sublya-bot`. Папка на сервере повторяет имя репо.
+- Repos are named `<space>-<project>`: `infra-server`, `infra-template-site`,
+  `shkatova-psychologist`. The server folder mirrors the repo name.
+- One project — one folder `/srv/<project>` and one compose project with an explicit `name:`.
+  Containers, volumes and networks get the project prefix, so projects never collide.
+- Projects publish no host ports. They join the external `edge` network and Caddy reaches them by
+  container name.
+- A project never writes outside its folder.
+- Every repo, public ones included, is pulled over SSH with its own read-only deploy key. Deploy
+  keys must be enabled for the organization (`deploy_keys_enabled_for_repositories`).
 
-- Один проект — одна папка `/srv/<project>` и один compose-проект с явным `name:`. Контейнеры,
-  тома и сети получают префикс проекта, поэтому проекты не пересекаются.
-- Проекты не публикуют порты на хост. Они подключаются к внешней сети `edge`, Caddy ходит к ним
-  по имени контейнера.
-- Проект не пишет за пределы своей папки. Какой домен куда идёт, знает только `sites/` этого репо.
-- Каждый репо, публичный тоже, тянется на сервер по SSH своим read-only deploy key. В
-  организации репо должны быть разрешены deploy keys (`deploy_keys_enabled_for_repositories`).
+## Deploy
 
-## Выкладка
+A push to `main` triggers GitHub Actions: `shellcheck` and `caddy validate` first, then an SSH
+login to the server. There the key is pinned to [`deploy/remote.sh`](deploy/remote.sh), which
+pulls `main`, refreshes the VPN egress and applies the Caddy config. A broken config never
+replaces the running one. To redeploy without a push:
 
-Пуш в `main` запускает GitHub Actions: проверка shellcheck и `caddy validate`, затем вход по SSH
-на сервер. Там ключ привязан к [`deploy/remote.sh`](deploy/remote.sh): он подтягивает `main`,
-обновляет VPN-выход и применяет конфиг Caddy. Повторить выкладку без пуша:
-`gh workflow run deploy.yml`.
+```bash
+gh workflow run deploy.yml
+```
 
-Ключ в `authorized_keys` сервера ограничен одной командой:
+The key in the server's `authorized_keys` is restricted to a single command:
 
 ```
 command="git -C /srv/infra-server pull --ff-only --quiet && /srv/infra-server/deploy/remote.sh",restrict ssh-ed25519 ... github-actions@infra-server
 ```
 
-Приватная половина лежит в секрете `DEPLOY_SSH_KEY` репозитория.
+Its private half is the `DEPLOY_SSH_KEY` repository secret.
 
-## Новый проект
+## Secrets
 
-1. В compose проекта: `name: <project>`, у сервиса уникальный `container_name`, сеть `edge`
-   как `external: true`, без `ports:`.
-2. Deploy key на сервере:
+Nothing secret is committed. Secrets live in `/srv/infra-server/.env` (template:
+[`.env.example`](.env.example)):
+
+| Variable | Used by |
+| --- | --- |
+| `VPN_SUBSCRIPTION_URL` | `vpn/update.sh` — subscription the Xray config is built from |
+| `TAPLIST_EDITOR_HASH` | `sites/community-taplist.caddy` — bcrypt hash for the editor's `basic_auth` |
+
+To give a site its own secret, reference it as `{$NAME}` in `sites/<project>.caddy` and pass it to
+the `caddy` service in `compose.yml` one by one, so the rest of `.env` stays out of Caddy:
+
+```yaml
+environment:
+  NAME: ${NAME:?NAME is not set, see .env.example}
+```
+
+Values containing `$` (bcrypt hashes) go in single quotes. A password hash is made with:
+
+```bash
+docker run --rm -it caddy:2.10-alpine caddy hash-password
+```
+
+## Adding a project
+
+1. In the project's compose: `name: <project>`, a unique `container_name` per service, the `edge`
+   network as `external: true`, no `ports:`.
+2. Create a deploy key on the server:
 
    ```bash
    ssh projects 'ssh-keygen -q -t ed25519 -N "" -C "projects-server:<project>" -f ~/.ssh/<project> &&
@@ -49,27 +126,36 @@ command="git -C /srv/infra-server pull --ff-only --quiet && /srv/infra-server/de
      cat ~/.ssh/<project>.pub'
    ```
 
-   Публичный ключ добавить в репо: `gh repo deploy-key add key.pub -R <org>/<repo> --title projects-server`.
-3. Клонировать: `ssh projects git clone github-<project>:<org>/<repo>.git /srv/<project>`
-   и поднять проект.
-4. Добавить `sites/<project>.caddy` с `reverse_proxy <container_name>:<port>`, направить DNS домена
-   на сервер и запушить `main`.
+   and add the public key to the repo:
 
-## VPN-выход
+   ```bash
+   gh repo deploy-key add key.pub -R <org>/<repo> --title projects-server
+   ```
 
-Сервер стоит в РФ, и часть внешних API (OpenRouter, Telegram) отсюда недоступна. Для этого есть
-контейнер `vpn`: Xray с HTTP-прокси `vpn:3128` и SOCKS `vpn:1080` на профиле "Всё и сразу" из
-подписки Alesha Vpnov. Маршруты и балансировщики профиля остаются как есть: российские адреса
-идут напрямую, остальное через европейские ноды, а если они лежат, через запасные цепочки.
+3. Clone and start the project:
 
-Проект пользуется им по желанию. В его compose:
+   ```bash
+   ssh projects git clone github-<project>:<org>/<repo>.git /srv/<project>
+   ```
+
+4. Add `sites/<project>.caddy` with `import common` and `reverse_proxy <container_name>:<port>`,
+   point the domain's DNS at the server and push to `main`.
+
+## VPN egress
+
+The server is hosted in Russia, where some external APIs (OpenRouter, Telegram) are unreachable.
+The `vpn` container runs Xray with an HTTP proxy on `vpn:3128` and SOCKS on `vpn:1080`, using the
+"Всё и сразу" profile from the subscription as is: Russian addresses go direct, the rest through
+European nodes, with fallback chains if those are down.
+
+Projects opt in from their compose:
 
 ```yaml
 services:
   app:
     environment:
       HTTPS_PROXY: http://vpn:3128
-      NODE_USE_ENV_PROXY: '1' # только для Node 24+: без этого fetch прокси не видит
+      NODE_USE_ENV_PROXY: '1' # Node 24+ only: without it fetch ignores the proxy
     networks:
       - vpn
 
@@ -79,14 +165,22 @@ networks:
     external: true
 ```
 
-Конфиг Xray собирает `vpn/update.sh` из подписки (`VPN_SUBSCRIPTION_URL` в `/srv/infra-server/.env`).
-Его запускает каждая выкладка и раз в сутки systemd-таймер `vpn-update.timer`. Проверка с сервера:
+`vpn/update.sh` rebuilds the config on every deploy and once a day via `vpn-update.timer`. Check
+from the server:
 
 ```bash
 docker run --rm --network vpn curlimages/curl -sx http://vpn:3128 https://www.cloudflare.com/cdn-cgi/trace
 ```
 
-## Подготовка сервера с нуля
+## Server from scratch
 
-Docker Engine из репозитория docker.com, `apt install jq`, `ufw allow 22/tcp, 80/tcp, 443`, затем
-`docker network create edge`, `docker network create vpn`, `.env` по образцу `.env.example` и `git clone github-infra-server:aimuzov-projects/infra-server.git /srv/infra-server`.
+1. Docker Engine from the docker.com apt repository, plus `apt install jq`.
+2. Firewall: `ufw allow 22/tcp`, `ufw allow 80/tcp`, `ufw allow 443` (TCP and UDP for HTTP/3).
+3. Networks: `docker network create edge` and `docker network create vpn`.
+4. Deploy key for this repo (see [Adding a project](#adding-a-project)), then
+   `git clone github-infra-server:aimuzov-projects/infra-server.git /srv/infra-server`.
+5. `/srv/infra-server/.env` from [`.env.example`](.env.example), then run `deploy/remote.sh` once.
+
+## License
+
+[MIT](LICENSE)
