@@ -17,8 +17,9 @@ set -euo pipefail
 
 	vpn/update.sh
 	systemctl link --quiet /srv/infra-server/vpn/vpn-update.service /srv/infra-server/vpn/vpn-update.timer
+	systemctl link --quiet /srv/infra-server/docker/docker-prune.service /srv/infra-server/docker/docker-prune.timer
 	systemctl daemon-reload
-	systemctl enable --now --quiet vpn-update.timer
+	systemctl enable --now --quiet vpn-update.timer docker-prune.timer
 
 	# A broken config stops here and Caddy keeps running the old one. The check goes before
 	# up -d, which recreates Caddy whenever its service in compose.yml changes. It runs in a

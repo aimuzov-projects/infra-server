@@ -1,0 +1,10 @@
+[Unit]
+Description=Drop old Docker build cache once a week
+
+[Timer]
+OnCalendar=weekly
+RandomizedDelaySec=1h
+Persistent=true
+
+[Install]
+WantedBy=timers.target
