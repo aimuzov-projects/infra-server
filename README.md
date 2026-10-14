@@ -61,8 +61,8 @@ vpn/vpn-update.{service,timer}   daily config refresh
   <project>/        ← clone of the project repo, built and run in place
 ```
 
-- Repos are named `<space>-<project>`: `infra-server`, `infra-template-site`,
-  `shkatova-psychologist`. The server folder mirrors the repo name.
+- Repos are named `<space>-<project>`: `infra-server`, `infra-site-template`,
+  `infra-site-kit`, `shkatova-psychologist`. The server folder mirrors the repo name.
 - One project — one folder `/srv/<project>` and one compose project with an explicit `name:`.
   Containers, volumes and networks get the project prefix, so projects never collide.
 - Projects publish no host ports. They join the external `edge` network and Caddy reaches them by
