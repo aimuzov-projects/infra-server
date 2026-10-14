@@ -50,6 +50,7 @@ compose.yml               сервисы caddy и vpn
 deploy/remote.sh          выкладка, выполняется на сервере
 vpn/update.sh             собирает конфиг Xray из подписки
 vpn/vpn-update.{service,timer}   обновление конфига раз в сутки
+docker/docker-prune.{service,timer}   чистка кэша сборки Docker раз в неделю
 .env.example              образец секретов (настоящий .env есть только на сервере)
 ```
 

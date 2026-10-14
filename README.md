@@ -50,6 +50,7 @@ compose.yml               caddy and vpn services
 deploy/remote.sh          deploy script, runs on the server
 vpn/update.sh             builds the Xray config from the subscription
 vpn/vpn-update.{service,timer}   daily config refresh
+docker/docker-prune.{service,timer}   weekly cleanup of the Docker build cache
 .env.example              secrets template (the real .env lives only on the server)
 ```
 
