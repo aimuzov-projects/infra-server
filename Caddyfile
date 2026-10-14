@@ -1,4 +1,4 @@
-# Каждый сайт описан своим файлом в sites/, тут только общее.
+# Each site lives in its own file under sites/, only the shared bits go here.
 
 (common) {
 	encode zstd gzip
@@ -8,10 +8,11 @@
 		X-Content-Type-Options nosniff
 		Referrer-Policy strict-origin-when-cross-origin
 		X-Frame-Options SAMEORIGIN
-		# Год только по HTTPS. Без includeSubDomains: у доменов бывают поддомены не отсюда.
+		# HTTPS only for a year. No includeSubDomains: some subdomains aren't served from here.
 		Strict-Transport-Security "max-age=31536000"
-		# Сайтам с сервера не нужны камера, микрофон, геолокация и оплата. «?» -- только если сайт
-		# не задал свой: блок отложен из-за -Server и иначе перезаписал бы заголовок сайта.
+		# Sites here don't need camera, mic, geolocation or payments. "?" sets it only if the site
+		# hasn't set its own: the block is deferred because of -Server, so otherwise it would
+		# overwrite the site's header.
 		?Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
 	}
 }

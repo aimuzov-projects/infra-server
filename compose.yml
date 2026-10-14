@@ -1,6 +1,6 @@
-# Единственный, кто слушает 80/443 на сервере. Проекты портов наружу не публикуют:
-# они цепляются к сети edge, а Caddy ходит к ним по имени контейнера. Кому нужен выход
-# в интернет через VPN, цепляется ещё и к сети vpn (см. README).
+# The only thing listening on 80/443 on the server. Projects don't publish ports:
+# they join the edge network and Caddy reaches them by container name. Those that need
+# to go out to the internet through the VPN also join the vpn network (see README).
 
 name: infra
 
@@ -9,6 +9,11 @@ services:
     image: caddy:2.10-alpine
     container_name: caddy
     restart: unless-stopped
+    # Password hashes for sites/*.caddy ({$VAR}), passed one by one so the rest of .env
+    # never reaches Caddy. Without a hash ":?" fails compose and the old Caddy keeps
+    # running, instead of serving the editor with no password.
+    environment:
+      TAPLIST_EDITOR_HASH: ${TAPLIST_EDITOR_HASH:?TAPLIST_EDITOR_HASH is not set, see .env.example}
     ports:
       - '80:80'
       - '443:443'
@@ -26,8 +31,8 @@ services:
         max-size: '5m'
         max-file: '2'
 
-  # VPN-выход для проектов: HTTP-прокси vpn:3128 и SOCKS vpn:1080 в сети vpn.
-  # Конфиг собирает vpn/update.sh из подписки, сам файл в git не попадает.
+  # VPN egress for projects: HTTP proxy vpn:3128 and SOCKS vpn:1080 on the vpn network.
+  # vpn/update.sh builds the config from the subscription, the file itself stays out of git.
   vpn:
     image: ghcr.io/xtls/xray-core:26.9.9
     container_name: vpn

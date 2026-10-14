@@ -5,7 +5,7 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Выкладки идут по очереди, новая не обрывает уже начатую.
+# Deploys run one at a time, a new one doesn't cut off one already in progress.
 concurrency:
   group: deploy
   cancel-in-progress: false
@@ -20,20 +20,23 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - run: shellcheck deploy/remote.sh vpn/update.sh
-      # Тот же образ, что в compose.yml: битый конфиг не доедет до сервера.
+      # Same image as in compose.yml, so a broken config never reaches the server.
+      # The hash is a throwaway one: the real secret lives only in the server's .env.
       - run: >-
           docker run --rm
           -v "$PWD/Caddyfile:/etc/caddy/Caddyfile:ro"
           -v "$PWD/sites:/etc/caddy/sites:ro"
-          caddy:2.10-alpine caddy validate --config /etc/caddy/Caddyfile
+          caddy:2.10-alpine sh -c
+          'TAPLIST_EDITOR_HASH="$(caddy hash-password --plaintext ci)"
+          caddy validate --config /etc/caddy/Caddyfile'
 
   deploy:
     needs: check
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
-      # Сервер сам знает, что делать: ключ в authorized_keys привязан к deploy/remote.sh,
-      # поэтому команду ssh не передаём.
+      # The server knows what to do: the key in authorized_keys is bound to deploy/remote.sh,
+      # so we don't pass a command to ssh.
       - name: Deploy on server
         env:
           SSH_KEY: ${{ secrets.DEPLOY_SSH_KEY }}

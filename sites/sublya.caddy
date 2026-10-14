@@ -1,11 +1,11 @@
-# Сабля: сайт из репо sublya/site (/srv/sublya-site) и Mini App-админка бота
-# из sublya/bot (/srv/sublya-bot), оба на одном домене.
+# Sublya: the site from repo sublya/site (/srv/sublya-site) and the bot's Mini App admin
+# from sublya/bot (/srv/sublya-bot), both on one domain.
 
 sublya.aimuzov.online {
 	import common
 
-	# Веб-Telegram открывает админку в своём iframe: вместо SAMEORIGIN из common тут список
-	# источников. defer, иначе заголовок из common вернётся после удаления.
+	# Telegram Web opens the admin in its own iframe, so instead of SAMEORIGIN from common
+	# there's a list of allowed origins. defer, otherwise common's header comes back after removal.
 	@admin path /admin /admin/*
 	header @admin {
 		-X-Frame-Options

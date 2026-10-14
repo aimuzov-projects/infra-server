@@ -1,9 +1,10 @@
-# Конвертер поручений, репо aimuzov-projects/prestige-logist, на сервере /srv/prestige-logist.
+# Assignment converter, repo aimuzov-projects/prestige-logist, on the server
+# in /srv/prestige-logist.
 
 logist.aimuzov.online {
 	import common
 
-	# Комплект поручения бывает до 20 МБ, API сам отвечает 413 сверх лимита.
+	# An assignment bundle can be up to 20 MB. Over that the API answers 413.
 	request_body /api/* {
 		max_size 21MB
 	}
