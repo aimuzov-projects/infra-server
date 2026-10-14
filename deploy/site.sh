@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
-# Deploy of a site on the server: pull its main and rebuild its containers.
-# The deploy key of each site is bound to it in authorized_keys:
+# Deploy of a site, run by its key from GitHub Actions through authorized_keys:
 #   command="/srv/infra-server/deploy/site.sh <project>",restrict ssh-ed25519 ...
-# so the logic lives here once instead of a copy in every site.
+# The build itself runs in site-deploy@<project>.service: if the SSH connection
+# drops, systemd finishes it. This script starts the unit, shows its log and
+# exits with its result.
 set -euo pipefail
 
 # The body is a block: bash reads it whole before a pull of this repo replaces the file.
@@ -13,24 +14,25 @@ set -euo pipefail
 		exit 2
 	fi
 
-	# One deploy at a time for all the sites: parallel builds choke the small server,
-	# so a deploy of any site waits here for the previous one. The pull goes after the
-	# lock, so a waiting deploy builds the newest main.
-	exec 9>/tmp/sites-deploy.lock
-	flock 9
+	unit="site-deploy@$project.service"
 
-	cd "/srv/$project"
-	git pull --ff-only --quiet
-	git log -1 --oneline
+	# A build of this site is still running, e.g. after a dropped connection: let it
+	# finish and build again, so the newest main gets out too.
+	while [[ $(systemctl show -p ActiveState --value "$unit") == activating ]]; do
+		echo "waiting for the running $unit"
+		sleep 5
+	done
 
-	# .env is made once by hand from .env.example and never comes from git.
-	if [[ -f .env.example && ! -f .env ]]; then
-		echo "no /srv/$project/.env: fill one in from .env.example" >&2
-		exit 1
-	fi
+	journalctl -u "$unit" -f -n 0 -o cat &
+	log=$!
+	trap 'kill "$log" 2>/dev/null' EXIT
 
-	# --remove-orphans drops containers of services the compose file no longer has.
-	docker compose -f deploy/docker-compose.yml up -d --build --quiet-pull --remove-orphans
-	docker image prune -f >/dev/null
-	exit
+	# Blocks until the build ends and fails with it. The job belongs to systemd, so it
+	# lives on if this client dies with the connection.
+	status=0
+	systemctl start "$unit" || status=$?
+
+	# journalctl may lag a little behind the unit.
+	sleep 1
+	exit "$status"
 }

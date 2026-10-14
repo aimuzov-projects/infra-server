@@ -1,0 +1,13 @@
+[Unit]
+Description=Deploy of the site %i
+After=docker.service network-online.target
+Requires=docker.service
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/srv/infra-server/deploy/site-build.sh %i
+# git reaches GitHub with the clone keys from /root/.ssh/config.
+Environment=HOME=/root
+# Covers the wait in the queue of the other sites plus the build itself.
+TimeoutStartSec=30min
