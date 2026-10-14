@@ -1,5 +1,5 @@
 [Unit]
-Description=Раз в сутки обновлять конфиг VPN-выхода
+Description=Update the VPN egress config once a day
 
 [Timer]
 OnCalendar=daily
