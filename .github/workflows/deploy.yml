@@ -3,12 +3,9 @@ name: Deploy
 on:
   push:
     branches: [main]
+  # Only the checks: deploy is skipped, and fork PRs don't get secrets anyway.
+  pull_request:
   workflow_dispatch:
-
-# Deploys run one at a time, a new one doesn't cut off one already in progress.
-concurrency:
-  group: deploy
-  cancel-in-progress: false
 
 permissions:
   contents: read
@@ -32,6 +29,12 @@ jobs:
 
   deploy:
     needs: check
+    if: github.event_name != 'pull_request'
+    # Deploys run one at a time, a new one doesn't cut off one already in progress.
+    # The queue is per job, so PR checks don't wait behind a deploy.
+    concurrency:
+      group: deploy
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
