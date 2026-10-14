@@ -1,5 +1,5 @@
-# Sublya: the site from repo sublya/site (/srv/sublya-site) and the bot's Mini App admin
-# from sublya/bot (/srv/sublya-bot), both on one domain.
+# Sublya: the site and the bot's Mini App admin from repo aimuzov-projects/sublya
+# (/srv/sublya), both on one domain.
 
 sublya.aimuzov.online {
 	import common
