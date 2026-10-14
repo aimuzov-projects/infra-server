@@ -1,5 +1,5 @@
-# Tatiana Shkatova's site, repo aimuzov-projects/shkatova-psychologist,
-# on the server in /srv/shkatova-psychologist.
+# Сайт Татьяны Шкатовой, репо aimuzov-projects/shkatova-psychologist,
+# на сервере в /srv/shkatova-psychologist.
 
 www.tatiana-shkatova.ru {
 	redir https://tatiana-shkatova.ru{uri} permanent
@@ -8,7 +8,7 @@ www.tatiana-shkatova.ru {
 tatiana-shkatova.ru {
 	import common
 
-	# The chat replies with a stream (SSE): proxy buffering would hold the response until the end.
+	# Чат отвечает потоком (SSE), с буферизацией прокси ответ придёт только целиком в конце.
 	handle /api/* {
 		reverse_proxy shkatova-chat:8787 {
 			flush_interval -1

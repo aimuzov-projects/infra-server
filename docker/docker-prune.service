@@ -5,6 +5,7 @@ Requires=docker.service
 
 [Service]
 Type=oneshot
-# Every deploy builds images, and the cache of old builds is never used again: on the 30 GB disk
-# it took 18 GB. A week keeps what the next deploys of every project still reuse.
+# Каждый деплой собирает образы, а кеш старых сборок больше не используется: на диске
+# в 30 ГБ он занимал 18 ГБ. Неделю храним потому что это ещё переиспользуют следующие
+# деплои всех проектов.
 ExecStart=/usr/bin/docker builder prune --force --filter until=168h

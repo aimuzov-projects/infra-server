@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Deploy of a site, run by its key from GitHub Actions through authorized_keys:
+# Деплой сайта, запускается его ключом из GitHub Actions через authorized_keys:
 #   command="/srv/infra-server/deploy/site.sh <project>",restrict ssh-ed25519 ...
-# Actions passes the release tag to deploy as the ssh command, it arrives in
-# SSH_ORIGINAL_COMMAND; without a tag the deploy takes the newest main.
-# The build itself runs in site-deploy@<project>.service: if the SSH connection
-# drops, systemd finishes it. This script starts the unit, shows its log and
-# exits with its result.
+# Релизный тег Actions передаёт как ssh-команду, он приходит в SSH_ORIGINAL_COMMAND.
+# Без тега деплоится свежий main.
+# Сама сборка идёт в site-deploy@<project>.service: если SSH-соединение оборвётся,
+# systemd её доведёт. Этот скрипт стартует юнит, показывает его лог и выходит
+# с его результатом.
 set -euo pipefail
 
-# The body is a block: bash reads it whole before a pull of this repo replaces the file.
+# Тело обёрнуто в блок: bash читает его целиком до того, как pull этого репо заменит файл.
 {
 	project=${1:-}
 	if [[ ! $project =~ ^[a-z0-9-]+$ || ! -d /srv/$project/.git ]]; then
@@ -24,14 +24,14 @@ set -euo pipefail
 
 	unit="site-deploy@$project.service"
 
-	# A build of this site is still running, e.g. after a dropped connection: let it
-	# finish and build again, so the requested version gets out too.
+	# Сборка этого сайта ещё идёт, например после обрыва соединения. Даём ей закончиться
+	# и собираем заново, чтобы запрошенная версия тоже выехала.
 	while [[ $(systemctl show -p ActiveState --value "$unit") == activating ]]; do
 		echo "waiting for the running $unit"
 		sleep 5
 	done
 
-	# The unit takes no arguments besides the project, so the tag goes through a file.
+	# Юнит не принимает аргументов кроме проекта, поэтому тег передаём через файл.
 	install -d /run/site-deploy
 	printf '%s\n' "$ref" > "/run/site-deploy/$project.ref"
 
@@ -39,12 +39,12 @@ set -euo pipefail
 	log=$!
 	trap 'kill "$log" 2>/dev/null' EXIT
 
-	# Blocks until the build ends and fails with it. The job belongs to systemd, so it
-	# lives on if this client dies with the connection.
+	# Блокируется до конца сборки и падает вместе с ней. Джоба принадлежит systemd,
+	# поэтому переживёт смерть этого клиента вместе с соединением.
 	status=0
 	systemctl start "$unit" || status=$?
 
-	# journalctl may lag a little behind the unit.
+	# journalctl может немного отставать от юнита, даём ему дописать хвост лога.
 	sleep 1
 	exit "$status"
 }

@@ -1,11 +1,12 @@
-# Sublya: the site and the bot's Mini App admin from repo aimuzov-projects/sublya
-# (/srv/sublya), both on one domain.
+# Sublya: сайт и админка бота (Mini App) из репо aimuzov-projects/sublya
+# (/srv/sublya), оба на одном домене.
 
 sublya.aimuzov.online {
 	import common
 
-	# Telegram Web opens the admin in its own iframe, so instead of SAMEORIGIN from common
-	# there's a list of allowed origins. defer, otherwise common's header comes back after removal.
+	# Telegram Web открывает админку в своём iframe, поэтому вместо SAMEORIGIN из common
+	# здесь список разрешённых origin'ов. Без defer заголовок из common вернётся
+	# после удаления.
 	@admin path /admin /admin/*
 	header @admin {
 		-X-Frame-Options

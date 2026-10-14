@@ -1,16 +1,16 @@
-# Bar taplist, repo aimuzov-projects/community-taplist, on the server in /srv/community-taplist.
+# Таплист бара, репо aimuzov-projects/community-taplist, на сервере в /srv/community-taplist.
 
 taplist.aimuzov.online {
 	import common
 
-	# TV boards stay open without a password, the editor and saving the list are for bartenders.
-	# The hash comes from the server's .env (see compose.yml), the repo is public.
+	# ТВ-доски открыты без пароля, а редактор и сохранение списка -- только для барменов.
+	# Хеш берётся из .env на сервере (см. compose.yml), так как репо публичное.
 	@editor expression path("/editor*") || (method("PUT") && path("/api/items"))
 	basic_auth @editor {
 		admin {$TAPLIST_EDITOR_HASH}
 	}
 
-	# The editor sends the whole list with covers, up to 16 MB. Over that the API answers 413.
+	# Редактор отправляет весь список вместе с обложками, до 16 МБ. Больше -- API отвечает 413.
 	request_body /api/* {
 		max_size 17MB
 	}

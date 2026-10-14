@@ -5,8 +5,8 @@ updates:
     schedule:
       interval: monthly
 
-  # caddy and xray images in compose.yml. The caddy tag in deploy.yml is a plain string
-  # in a run step, Dependabot won't see it: bump it by hand in the same PR.
+  # Образы caddy и xray в compose.yml. Тег caddy в deploy.yml -- просто строка
+  # в run-шаге, Dependabot его не увидит, поэтому поднимаем руками в том же PR.
   - package-ecosystem: docker-compose
     directory: /
     schedule:

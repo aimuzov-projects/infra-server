@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Build of a site on the server: check out the requested release tag (or the
-# newest main without one) and rebuild its containers.
-# Runs inside site-deploy@<project>.service, started by site.sh, so a dropped
-# SSH connection doesn't kill a build halfway.
+# Сборка сайта на сервере: чекаут запрошенного релизного тега (без тега --
+# свежего main) и пересборка его контейнеров.
+# Запускается внутри site-deploy@<project>.service, который стартует site.sh,
+# поэтому оборванное SSH-соединение не убивает сборку на середине.
 set -euo pipefail
 
-# The body is a block: bash reads it whole before a pull of this repo replaces the file.
+# Тело обёрнуто в блок: bash читает его целиком до того, как pull этого репо заменит файл.
 {
 	project=${1:-}
 	if [[ ! $project =~ ^[a-z0-9-]+$ || ! -d /srv/$project/.git ]]; then
@@ -13,16 +13,16 @@ set -euo pipefail
 		exit 2
 	fi
 
-	# Written by site.sh. Checked again: the file is the only input from outside here.
+	# Файл пишет site.sh. Проверяем повторно, так как здесь это единственный ввод снаружи.
 	ref=$(cat "/run/site-deploy/$project.ref" 2>/dev/null || true)
 	if [[ -n $ref && ! $ref =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
 		echo "not a release tag: $ref" >&2
 		exit 2
 	fi
 
-	# One deploy at a time for all the sites: parallel builds choke the small server,
-	# so a deploy of any site waits here for the previous one. The fetch goes after the
-	# lock, so a waiting deploy sees the newest tags and main.
+	# Один деплой за раз на все сайты: параллельные сборки душат маленький сервер,
+	# поэтому деплой любого сайта ждёт здесь предыдущий. fetch стоит после блокировки,
+	# чтобы дождавшийся деплой увидел свежие теги и main.
 	exec 9>/tmp/sites-deploy.lock
 	flock 9
 
@@ -33,13 +33,13 @@ set -euo pipefail
 	git checkout --quiet --detach "$target"
 	git log -1 --format="%h %s ($(git describe --tags --always))"
 
-	# .env is made once by hand from .env.example and never comes from git.
+	# .env делается один раз руками из .env.example и из git никогда не приходит.
 	if [[ -f .env.example && ! -f .env ]]; then
 		echo "no /srv/$project/.env: fill one in from .env.example" >&2
 		exit 1
 	fi
 
-	# --remove-orphans drops containers of services the compose file no longer has.
+	# --remove-orphans убирает контейнеры сервисов, которых в compose-файле уже нет.
 	docker compose -f deploy/docker-compose.yml up -d --build --quiet-pull --remove-orphans
 	docker image prune -f >/dev/null
 	exit
