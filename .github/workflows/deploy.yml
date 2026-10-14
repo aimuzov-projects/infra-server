@@ -16,7 +16,7 @@ jobs:
     timeout-minutes: 5
     steps:
       - uses: actions/checkout@v5
-      - run: shellcheck deploy/remote.sh vpn/update.sh
+      - run: shellcheck deploy/remote.sh deploy/site.sh vpn/update.sh
       # Same image as in compose.yml, so a broken config never reaches the server.
       # The hash is a throwaway one: the real secret lives only in the server's .env.
       - run: >-
