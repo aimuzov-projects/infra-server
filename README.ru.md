@@ -50,6 +50,7 @@ compose.yml               сервисы caddy и vpn
 deploy/remote.sh          выкладка, выполняется на сервере
 deploy/site.sh            выкладка любого сайта: запускает site-deploy@<project> и показывает его лог
 deploy/site-build.sh      сама сборка, внутри site-deploy@.service
+ssh/10-no-passwords.conf  sshd: только ключи, без паролей; ставится при каждой выкладке
 vpn/update.sh             собирает конфиг Xray из подписки
 vpn/vpn-update.{service,timer}   обновление конфига раз в сутки
 docker/docker-prune.{service,timer}   чистка кэша сборки Docker раз в неделю

@@ -22,6 +22,22 @@ set -euo pipefail
 	systemctl daemon-reload
 	systemctl enable --now --quiet vpn-update.timer docker-prune.timer
 
+	# sshd -t checks the whole config with the new file before the reload. A broken file
+	# goes back to the previous one, so a deploy can't lock everyone out.
+	conf=/etc/ssh/sshd_config.d/10-no-passwords.conf
+	if ! cmp -s ssh/10-no-passwords.conf "$conf"; then
+		[[ -f $conf ]] && cp -p "$conf" "$conf.prev"
+		install -m 644 ssh/10-no-passwords.conf "$conf"
+		if sshd -t; then
+			rm -f "$conf.prev"
+			systemctl reload ssh
+		else
+			if [[ -f $conf.prev ]]; then mv "$conf.prev" "$conf"; else rm "$conf"; fi
+			echo "sshd rejected ssh/10-no-passwords.conf, the old config stays" >&2
+			exit 1
+		fi
+	fi
+
 	# A broken config stops here and Caddy keeps running the old one. The check goes before
 	# up -d, which recreates Caddy whenever its service in compose.yml changes. It runs in a
 	# throwaway container because that one sees the fresh files.
