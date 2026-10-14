@@ -48,6 +48,7 @@ Caddyfile                 shared snippet (compression, security headers) + impor
 sites/<project>.caddy     one file per site: domain → container
 compose.yml               caddy and vpn services
 deploy/remote.sh          deploy script, runs on the server
+deploy/site.sh            deploy script of every site, runs on the server
 vpn/update.sh             builds the Xray config from the subscription
 vpn/vpn-update.{service,timer}   daily config refresh
 docker/docker-prune.{service,timer}   weekly cleanup of the Docker build cache
@@ -69,8 +70,9 @@ docker/docker-prune.{service,timer}   weekly cleanup of the Docker build cache
 - Projects publish no host ports. They join the external `edge` network and Caddy reaches them by
   container name.
 - A project never writes outside its folder.
-- Sites deploy one at a time: their `deploy/remote.sh` share the lock `/tmp/sites-deploy.lock`,
-  so a merge into several repos at once doesn't build them in parallel on the small server.
+- Sites deploy with one script, [`deploy/site.sh`](deploy/site.sh), the key of a site runs it with
+  the project name. Its lock `/tmp/sites-deploy.lock` lets the server build one site at a time, so
+  a merge into several repos at once doesn't build them in parallel on the small server.
 - Every repo, public ones included, is pulled over SSH with its own read-only deploy key. Deploy
   keys must be enabled for the organization (`deploy_keys_enabled_for_repositories`).
 
@@ -141,7 +143,14 @@ docker run --rm -it caddy:2.10-alpine caddy hash-password
    ssh projects git clone github-<project>:<org>/<repo>.git /srv/<project>
    ```
 
-4. Add `sites/<project>.caddy` with `import common` and `reverse_proxy <container_name>:<port>`,
+4. For a site, let its GitHub Actions deploy: add the public half of a new key to
+   `/root/.ssh/authorized_keys` and the private half to the repo secret `DEPLOY_SSH_KEY`:
+
+   ```
+   command="/srv/infra-server/deploy/site.sh <project>",restrict ssh-ed25519 ... github-actions@<project>
+   ```
+
+5. Add `sites/<project>.caddy` with `import common` and `reverse_proxy <container_name>:<port>`,
    point the domain's DNS at the server and push to `main`.
 
 ## VPN egress

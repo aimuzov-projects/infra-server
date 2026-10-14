@@ -48,6 +48,7 @@ Caddyfile                 общий сниппет (сжатие, заголо�
 sites/<project>.caddy     по файлу на сайт: домен → контейнер
 compose.yml               сервисы caddy и vpn
 deploy/remote.sh          выкладка, выполняется на сервере
+deploy/site.sh            выкладка любого сайта, выполняется на сервере
 vpn/update.sh             собирает конфиг Xray из подписки
 vpn/vpn-update.{service,timer}   обновление конфига раз в сутки
 docker/docker-prune.{service,timer}   чистка кэша сборки Docker раз в неделю
@@ -68,8 +69,9 @@ docker/docker-prune.{service,timer}   чистка кэша сборки Docker 
   тома и сети получают префикс проекта, поэтому проекты не пересекаются.
 - Проекты не публикуют порты на хост. Они подключаются к внешней сети `edge`, Caddy ходит к ним
   по имени контейнера.
-- Сайты выкладываются по одному: их `deploy/remote.sh` берут общий lock `/tmp/sites-deploy.lock`,
-  поэтому мерж сразу в несколько репо не собирает их параллельно на маленьком сервере.
+- Сайты выкладываются одним скриптом, [`deploy/site.sh`](deploy/site.sh), ключ сайта запускает его
+  с именем проекта. Его lock `/tmp/sites-deploy.lock` даёт серверу собирать по одному сайту, поэтому
+  мерж сразу в несколько репо не собирает их параллельно на маленьком сервере.
 - Каждый репо, публичный тоже, тянется на сервер по SSH своим read-only deploy key. В
   организации должны быть разрешены deploy keys (`deploy_keys_enabled_for_repositories`).
 
@@ -140,7 +142,14 @@ docker run --rm -it caddy:2.10-alpine caddy hash-password
    ssh projects git clone github-<project>:<org>/<repo>.git /srv/<project>
    ```
 
-4. Добавить `sites/<project>.caddy` с `import common` и `reverse_proxy <container_name>:<port>`,
+4. Для сайта -- пустить выкладку из его GitHub Actions: публичную половину нового ключа дописать в
+   `/root/.ssh/authorized_keys`, приватную положить в секрет репо `DEPLOY_SSH_KEY`:
+
+   ```
+   command="/srv/infra-server/deploy/site.sh <project>",restrict ssh-ed25519 ... github-actions@<project>
+   ```
+
+5. Добавить `sites/<project>.caddy` с `import common` и `reverse_proxy <container_name>:<port>`,
    направить DNS домена на сервер и запушить `main`.
 
 ## VPN-выход
