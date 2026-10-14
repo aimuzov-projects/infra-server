@@ -50,6 +50,7 @@ compose.yml               caddy and vpn services
 deploy/remote.sh          deploy script, runs on the server
 deploy/site.sh            deploy of every site: starts site-deploy@<project> and shows its log
 deploy/site-build.sh      the build itself, inside site-deploy@.service
+ssh/10-no-passwords.conf  sshd: keys only, no passwords; applied on every deploy
 vpn/update.sh             builds the Xray config from the subscription
 vpn/vpn-update.{service,timer}   daily config refresh
 docker/docker-prune.{service,timer}   weekly cleanup of the Docker build cache
