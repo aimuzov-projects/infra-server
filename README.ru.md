@@ -38,7 +38,7 @@ flowchart LR
 | [taplist.aimuzov.online](https://taplist.aimuzov.online) | [aimuzov-projects/community-taplist](https://github.com/aimuzov-projects/community-taplist) | `community-taplist`, `community-taplist-api` |
 | [codenames.aimuzov.online](https://codenames.aimuzov.online) | [aimuzov-projects/codenames](https://github.com/aimuzov-projects/codenames) | `codenames`, `codenames-relay` |
 | [logist.aimuzov.online](https://logist.aimuzov.online) | [aimuzov-projects/prestige-logist](https://github.com/aimuzov-projects/prestige-logist) | `prestige-logist`, `prestige-logist-api` |
-| [sublya.aimuzov.online](https://sublya.aimuzov.online) | [sublya/site](https://github.com/sublya/site), [sublya/bot](https://github.com/sublya/bot) | `sublya-site`, `sublya-tunnel` |
+| [sublya.aimuzov.online](https://sublya.aimuzov.online) | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya) | `sublya-site`, `sublya-tunnel` |
 | [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online) | [lazyvimx/site](https://github.com/lazyvimx/site) | `lazyvimx-site` |
 
 ## Что где лежит
