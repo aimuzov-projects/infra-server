@@ -68,6 +68,8 @@ vpn/vpn-update.{service,timer}   daily config refresh
 - Projects publish no host ports. They join the external `edge` network and Caddy reaches them by
   container name.
 - A project never writes outside its folder.
+- Sites deploy one at a time: their `deploy/remote.sh` share the lock `/tmp/sites-deploy.lock`,
+  so a merge into several repos at once doesn't build them in parallel on the small server.
 - Every repo, public ones included, is pulled over SSH with its own read-only deploy key. Deploy
   keys must be enabled for the organization (`deploy_keys_enabled_for_repositories`).
 
