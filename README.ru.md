@@ -197,6 +197,13 @@ docker run --rm --network vpn curlimages/curl -sx http://vpn:3128 https://www.cl
    `git clone github-infra-server:aimuzov-projects/infra-server.git /srv/infra-server`.
 5. `/srv/infra-server/.env` по образцу [`.env.example`](.env.example), затем один раз
    `deploy/remote.sh`.
+6. Оболочка: root получает fish из [dotfiles](https://github.com/aimuzov/dotfiles/blob/main/docs/fish/README.ru.md#linux-сервер),
+   bash остаётся login shell, а интерактивный вход по SSH переключается в fish. Поставить
+   `chezmoi_<version>_linux_amd64.deb` из [релизов chezmoi](https://github.com/twpayne/chezmoi/releases),
+   сверив его с `checksums.txt`, затем
+   `chezmoi init --apply --recurse-submodules=false https://github.com/aimuzov/dotfiles.git`.
+   Дальше каждый деплой этого репо делает `chezmoi update`, так что правки dotfiles приезжают
+   со следующим деплоем (или `gh workflow run deploy.yml`).
 
 ## Лицензия
 
