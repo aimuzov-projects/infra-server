@@ -1,20 +1,18 @@
-<div align="center">
+<p align="center">
+	<img src="https://img.shields.io/badge/English-f97316?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MCAzMCI+PGNsaXBQYXRoIGlkPSJ0Ij48cGF0aCBkPSJNMzAsMTVoMzB2MTV6djE1aC0zMHpoLTMwdi0xNXp2LTE1aDMweiIvPjwvY2xpcFBhdGg+PHBhdGggZD0iTTAsMHYzMGg2MHYtMzB6IiBmaWxsPSIjMDEyMTY5Ii8+PHBhdGggZD0iTTAsMCA2MCwzME02MCwwIDAsMzAiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSI2Ii8+PHBhdGggZD0iTTAsMCA2MCwzME02MCwwIDAsMzAiIGNsaXAtcGF0aD0idXJsKCN0KSIgc3Ryb2tlPSIjQzgxMDJFIiBzdHJva2Utd2lkdGg9IjQiLz48cGF0aCBkPSJNMzAsMHYzME0wLDE1aDYwIiBzdHJva2U9IiNmZmYiIHN0cm9rZS13aWR0aD0iMTAiLz48cGF0aCBkPSJNMzAsMHYzME0wLDE1aDYwIiBzdHJva2U9IiNDODEwMkUiIHN0cm9rZS13aWR0aD0iNiIvPjwvc3ZnPg==" alt="English">
+	<a href="README.ru.md"><img src="https://img.shields.io/badge/%D0%A0%D1%83%D1%81%D1%81%D0%BA%D0%B8%D0%B9-555?logo=data:image/svg%2bxml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA5IDYiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0wIDBoOXYzSDB6Ii8+PHBhdGggZmlsbD0iIzAwMzlhNiIgZD0iTTAgMmg5djJIMHoiLz48cGF0aCBmaWxsPSIjZDUyYjFlIiBkPSJNMCA0aDl2MkgweiIvPjwvc3ZnPg==" alt="Русский"></a>
+</p>
 
-# infra-server
+<p align="center">
+	<a href="https://github.com/aimuzov-projects/infra-server/actions/workflows/deploy.yml"><img src="https://img.shields.io/github/actions/workflow/status/aimuzov-projects/infra-server/deploy.yml?branch=main&label=deploy" alt="Deploy"></a>
+	<a href="https://caddyserver.com"><img src="https://img.shields.io/badge/Caddy-2.10-1f88c0?logo=caddy&logoColor=white" alt="Caddy"></a>
+	<a href="https://github.com/XTLS/Xray-core"><img src="https://img.shields.io/badge/Xray-26.9-555" alt="Xray"></a>
+	<a href="https://docs.docker.com/compose/"><img src="https://img.shields.io/badge/Docker-Compose-2496ed?logo=docker&logoColor=white" alt="Docker Compose"></a>
+	<a href="LICENSE"><img src="https://img.shields.io/github/license/aimuzov-projects/infra-server" alt="License"></a>
+</p>
 
-Shared Caddy front door and VPN egress for a small self-hosted projects server.
-
-[![Deploy](https://github.com/aimuzov-projects/infra-server/actions/workflows/deploy.yml/badge.svg)](https://github.com/aimuzov-projects/infra-server/actions/workflows/deploy.yml)
-[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
-![Caddy 2.10](https://img.shields.io/badge/Caddy-2.10-1f88c0?logo=caddy&logoColor=white)
-![Xray](https://img.shields.io/badge/Xray-26.9-555)
-![Docker Compose](https://img.shields.io/badge/Docker-Compose-2496ed?logo=docker&logoColor=white)
-
-**English** · [Русский](README.ru.md)
-
-</div>
-
----
+<h3 align="center">Shared Caddy front door and VPN egress for a small projects server</h3>
+<p align="center">One Caddy on 80/443, every project in its own folder and compose project, deploys from GitHub Actions over SSH</p>
 
 One Caddy owns ports 80/443 on the server, issues TLS certificates and routes each domain to its
 project's container. Projects never publish ports and never touch each other: the only place
@@ -32,14 +30,14 @@ flowchart LR
 
 ## Sites
 
-| Domain | Project | Containers |
-| --- | --- | --- |
-| [tatiana-shkatova.ru](https://tatiana-shkatova.ru) | [aimuzov-projects/shkatova-psychologist](https://github.com/aimuzov-projects/shkatova-psychologist) | `shkatova-psychologist`, `shkatova-chat` |
-| [taplist.aimuzov.online](https://taplist.aimuzov.online) | [aimuzov-projects/community-taplist](https://github.com/aimuzov-projects/community-taplist) | `community-taplist`, `community-taplist-api` |
-| [codenames.aimuzov.online](https://codenames.aimuzov.online) | [aimuzov-projects/codenames](https://github.com/aimuzov-projects/codenames) | `codenames`, `codenames-relay` |
-| [logist.aimuzov.online](https://logist.aimuzov.online) | [aimuzov-projects/prestige-logist](https://github.com/aimuzov-projects/prestige-logist) | `prestige-logist`, `prestige-logist-api` |
-| [sublya.aimuzov.online](https://sublya.aimuzov.online) | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya) | `sublya-site`, `sublya-tunnel` |
-| [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online) | [lazyvimx/site](https://github.com/lazyvimx/site) | `lazyvimx-site` |
+| Domain                                                       | Project                                                                                             | Containers                                   |
+| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| [tatiana-shkatova.ru](https://tatiana-shkatova.ru)           | [aimuzov-projects/shkatova-psychologist](https://github.com/aimuzov-projects/shkatova-psychologist) | `shkatova-psychologist`, `shkatova-chat`     |
+| [taplist.aimuzov.online](https://taplist.aimuzov.online)     | [aimuzov-projects/community-taplist](https://github.com/aimuzov-projects/community-taplist)         | `community-taplist`, `community-taplist-api` |
+| [codenames.aimuzov.online](https://codenames.aimuzov.online) | [aimuzov-projects/codenames](https://github.com/aimuzov-projects/codenames)                         | `codenames`, `codenames-relay`               |
+| [logist.aimuzov.online](https://logist.aimuzov.online)       | [aimuzov-projects/prestige-logist](https://github.com/aimuzov-projects/prestige-logist)             | `prestige-logist`, `prestige-logist-api`     |
+| [sublya.aimuzov.online](https://sublya.aimuzov.online)       | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya)                               | `sublya-site`, `sublya-tunnel`               |
+| [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online)   | [lazyvimx/site](https://github.com/lazyvimx/site)                                                   | `lazyvimx-site`                              |
 
 ## Repository layout
 
@@ -50,6 +48,7 @@ compose.yml               caddy and vpn services
 deploy/remote.sh          deploy script, runs on the server
 deploy/site.sh            deploy of every site: starts site-deploy@<project> and shows its log
 deploy/site-build.sh      the build itself, inside site-deploy@.service
+deploy/site-deploy@.service   systemd unit of a site build, outlives the SSH connection
 ssh/10-no-passwords.conf  sshd: keys only, no passwords; applied on every deploy
 vpn/update.sh             builds the Xray config from the subscription
 vpn/vpn-update.{service,timer}   daily config refresh
@@ -106,10 +105,10 @@ Its private half is the `DEPLOY_SSH_KEY` repository secret.
 Nothing secret is committed. Secrets live in `/srv/infra-server/.env` (template:
 [`.env.example`](.env.example)):
 
-| Variable | Used by |
-| --- | --- |
-| `VPN_SUBSCRIPTION_URL` | `vpn/update.sh` — subscription the Xray config is built from |
-| `TAPLIST_EDITOR_HASH` | `sites/community-taplist.caddy` — bcrypt hash for the editor's `basic_auth` |
+| Variable               | Used by                                                                     |
+| ---------------------- | --------------------------------------------------------------------------- |
+| `VPN_SUBSCRIPTION_URL` | `vpn/update.sh` — subscription the Xray config is built from                |
+| `TAPLIST_EDITOR_HASH`  | `sites/community-taplist.caddy` — bcrypt hash for the editor's `basic_auth` |
 
 To give a site its own secret, reference it as `{$NAME}` in `sites/<project>.caddy` and pass it to
 the `caddy` service in `compose.yml` one by one, so the rest of `.env` stays out of Caddy:
@@ -143,21 +142,28 @@ docker run --rm -it caddy:2.10-alpine caddy hash-password
    gh repo deploy-key add key.pub -R <org>/<repo> --title projects-server
    ```
 
-3. Clone and start the project:
+3. Clone the project:
 
    ```bash
    ssh projects git clone github-<project>:<org>/<repo>.git /srv/<project>
    ```
 
+   When the repo has `.env.example`, fill `/srv/<project>/.env` from it: without that file the
+   build stops before compose.
+
 4. For a site, let its GitHub Actions deploy: add the public half of a new key to
-   `/root/.ssh/authorized_keys` and the private half to the repo secret `DEPLOY_SSH_KEY`:
+   `/root/.ssh/authorized_keys` and the private half to the repo secret `DEPLOY_SSH_KEY`, then set
+   the repo variable `DEPLOY_ENABLED` to `true`, since sites from infra-site-template skip the
+   deploy job without it:
 
    ```
    command="/srv/infra-server/deploy/site.sh <project>",restrict ssh-ed25519 ... github-actions@<project>
    ```
 
 5. Add `sites/<project>.caddy` with `import common` and `reverse_proxy <container_name>:<port>`,
-   point the domain's DNS at the server and push to `main`.
+   point the domain's DNS at the server and push to `main`. `common` sets the security headers,
+   a site's own `Permissions-Policy` wins over it, see [`codenames.caddy`](sites/codenames.caddy).
+6. The first build: run the site's Deploy by hand or `ssh projects /srv/infra-server/deploy/site.sh <project>`.
 
 ## VPN egress
 
