@@ -1,0 +1,6 @@
+# Wodcare, репо aimuzov-projects/wodcare, на сервере /srv/wodcare.
+
+wodcare.aimuzov.online {
+	import common
+	reverse_proxy wodcare:80
+}
