@@ -42,6 +42,7 @@ flowchart LR
 | [logist.aimuzov.online](https://logist.aimuzov.online)       | [aimuzov-projects/prestige-logist](https://github.com/aimuzov-projects/prestige-logist)             | `prestige-logist`, `prestige-logist-api`     |
 | [sublya.aimuzov.online](https://sublya.aimuzov.online)       | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya)                               | `sublya-site`, `sublya-tunnel`               |
 | [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online)   | [lazyvimx/site](https://github.com/lazyvimx/site)                                                   | `lazyvimx-site`                              |
+| [wodlog.aimuzov.online](https://wodlog.aimuzov.online)       | [aimuzov-projects/wodlog](https://github.com/aimuzov-projects/wodlog)                               | `wodlog`, `wodlog-api`                       |
 
 ## Repository layout
 
