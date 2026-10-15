@@ -4,6 +4,10 @@
 </p>
 
 <p align="center">
+	<img src=".github/assets/banner.jpg" alt="infra-server: общий Caddy и VPN-выход" width="100%">
+</p>
+
+<p align="center">
 	<a href="https://github.com/aimuzov-projects/infra-server/actions/workflows/deploy.yml"><img src="https://img.shields.io/github/actions/workflow/status/aimuzov-projects/infra-server/deploy.yml?branch=main&label=deploy" alt="Deploy"></a>
 	<a href="https://caddyserver.com"><img src="https://img.shields.io/badge/Caddy-2.10-1f88c0?logo=caddy&logoColor=white" alt="Caddy"></a>
 	<a href="https://github.com/XTLS/Xray-core"><img src="https://img.shields.io/badge/Xray-26.9-555" alt="Xray"></a>
