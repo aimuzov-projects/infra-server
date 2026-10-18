@@ -43,7 +43,7 @@ flowchart LR
 | [sublya.aimuzov.online](https://sublya.aimuzov.online)       | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya)                               | `sublya-site`, `sublya-tunnel`               |
 | [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online)   | [lazyvimx/site](https://github.com/lazyvimx/site)                                                   | `lazyvimx-site`                              |
 | [wodlog.aimuzov.online](https://wodlog.aimuzov.online)       | [aimuzov-projects/wodlog](https://github.com/aimuzov-projects/wodlog)                               | `wodlog`, `wodlog-api`                       |
-| [wodcare.aimuzov.online](https://wodcare.aimuzov.online)     | [aimuzov-projects/wodcare](https://github.com/aimuzov-projects/wodcare)                             | `wodcare`                                    |
+| [sorebody.aimuzov.online](https://sorebody.aimuzov.online)   | [aimuzov-projects/wodcare](https://github.com/aimuzov-projects/wodcare)                             | `wodcare`                                    |
 
 ## Repository layout
 

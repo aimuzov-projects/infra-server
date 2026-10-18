@@ -1,6 +1,7 @@
-# Wodcare, репо aimuzov-projects/wodcare, на сервере /srv/wodcare.
+# Справочник травм (Wodcare, скоро Sorebody), репо aimuzov-projects/wodcare, на сервере /srv/wodcare.
+# Старый домен wodcare.aimuzov.online убран вместе с A-записью.
 
-wodcare.aimuzov.online {
+sorebody.aimuzov.online {
 	import common
 	reverse_proxy wodcare:80
 }
