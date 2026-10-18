@@ -3,5 +3,15 @@
 
 sorebody.aimuzov.online {
 	import common
+
+	# Вебвизор и карта кликов Метрики открывают сайт в iframe на своих доменах, поэтому вместо
+	# SAMEORIGIN из common -- список из справки Метрики (install-counter-csp). Без defer
+	# заголовок из common вернётся после удаления.
+	header {
+		-X-Frame-Options
+		Content-Security-Policy "frame-ancestors 'self' metrika.yandex.ru analytics.yandex.by analytics.yandex.com analytics.yandex.com.tr analytics.yandex.kz analytics.yandex.ru metr.yandex.by metr.yandex.com metr.yandex.com.tr metr.yandex.kz metr.yandex.ru metrica.ya.ru metrica.yandex metrica.yandex.by metrica.yandex.com metrica.yandex.com.tr metrica.yandex.kz metrica.yandex.ru metrika.ya.ru metrika.yandex metrika.yandex.by metrika.yandex.com metrika.yandex.com.tr metrika.yandex.kz metrika.yandex.uz"
+		defer
+	}
+
 	reverse_proxy wodcare:80
 }
