@@ -13,5 +13,17 @@ sorebody.aimuzov.online {
 		defer
 	}
 
-	reverse_proxy wodcare:80
+	# Публичный MCP справочника (src/backend в репо сайта). Запрос к нему -- килобайт-другой,
+	# больше 64 КБ -- Caddy отвечает 413, не дочитывая.
+	request_body /mcp {
+		max_size 64KB
+	}
+
+	handle /mcp {
+		reverse_proxy wodcare-api:8787
+	}
+
+	handle {
+		reverse_proxy wodcare:80
+	}
 }
