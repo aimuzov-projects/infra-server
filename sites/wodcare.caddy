@@ -23,6 +23,17 @@ sorebody.aimuzov.online {
 		reverse_proxy wodcare-api:8787
 	}
 
+	# Чат со справочником, тот же бэкенд. Реплика -- до 1 000 символов, тело с запасом 8 КБ.
+	# Ответ идёт потоком SSE: text/event-stream Caddy отдаёт без буфера и не сжимает
+	# (проверено на 2.10), так что flush_interval не нужен.
+	request_body /api/chat {
+		max_size 8KB
+	}
+
+	handle /api/chat {
+		reverse_proxy wodcare-api:8787
+	}
+
 	handle {
 		reverse_proxy wodcare:80
 	}
