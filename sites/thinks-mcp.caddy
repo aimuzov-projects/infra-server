@@ -6,7 +6,7 @@ thinks-mcp.aimuzov.online {
 	# Выгрузка Telegram загружается целиком одним PUT, это сотни мегабайт. Лимит должен
 	# совпадать с THINKS_MAX_UPLOAD_MB в .env проекта, иначе 413 отдаст уже Caddy.
 	request_body /account/upload {
-		max_size 2GB
+		max_size 1GB
 	}
 
 	reverse_proxy thinks-mcp:8080
