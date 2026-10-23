@@ -43,7 +43,7 @@ flowchart LR
 | [sublya.aimuzov.online](https://sublya.aimuzov.online)       | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya)                               | `sublya-site`, `sublya-tunnel`               |
 | [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online)   | [lazyvimx/site](https://github.com/lazyvimx/site)                                                   | `lazyvimx-site`                              |
 | [wodlog.aimuzov.online](https://wodlog.aimuzov.online)       | [aimuzov-projects/wodlog](https://github.com/aimuzov-projects/wodlog)                               | `wodlog`, `wodlog-api`                       |
-| [sorebody.aimuzov.online](https://sorebody.aimuzov.online)   | [aimuzov-projects/sorebody](https://github.com/aimuzov-projects/sorebody)                             | `sorebody`, `sorebody-api`                     |
+| [sorebody.aimuzov.online](https://sorebody.aimuzov.online)   | [aimuzov-projects/sorebody](https://github.com/aimuzov-projects/sorebody)                           | `sorebody`, `sorebody-api`                   |
 
 ## Repository layout
 
@@ -185,7 +185,7 @@ services:
   app:
     environment:
       HTTPS_PROXY: http://vpn:3128
-      NODE_USE_ENV_PROXY: '1' # Node 24+ only: without it fetch ignores the proxy
+      NODE_USE_ENV_PROXY: "1" # Node 24+ only: without it fetch ignores the proxy
     networks:
       - vpn
 
