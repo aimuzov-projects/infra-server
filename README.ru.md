@@ -43,7 +43,7 @@ flowchart LR
 | [sublya.aimuzov.online](https://sublya.aimuzov.online)         | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya)                               | `sublya-site`, `sublya-tunnel`               |
 | [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online)     | [lazyvimx/site](https://github.com/lazyvimx/site)                                                   | `lazyvimx-site`                              |
 | [wodlog.aimuzov.online](https://wodlog.aimuzov.online)         | [aimuzov-projects/wodlog](https://github.com/aimuzov-projects/wodlog)                               | `wodlog`, `wodlog-api`                       |
-| [sorebody.aimuzov.online](https://sorebody.aimuzov.online)     | [aimuzov-projects/wodcare](https://github.com/aimuzov-projects/wodcare)                             | `wodcare`, `wodcare-api`                     |
+| [sorebody.aimuzov.online](https://sorebody.aimuzov.online)     | [aimuzov-projects/sorebody](https://github.com/aimuzov-projects/sorebody)                           | `sorebody`, `sorebody-api`                   |
 | [thinks-mcp.aimuzov.online](https://thinks-mcp.aimuzov.online) | [aimuzov/thinks-mcp](https://github.com/aimuzov/thinks-mcp)                                         | `thinks-mcp`                                 |
 
 ## Что где лежит

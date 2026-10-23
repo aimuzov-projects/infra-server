@@ -1,4 +1,4 @@
-# Справочник травм (Wodcare, скоро Sorebody), репо aimuzov-projects/wodcare, на сервере /srv/wodcare.
+# Справочник травм Sorebody, репо aimuzov-projects/sorebody, на сервере /srv/sorebody.
 # Старый домен wodcare.aimuzov.online убран вместе с A-записью.
 
 sorebody.aimuzov.online {
@@ -20,7 +20,7 @@ sorebody.aimuzov.online {
 	}
 
 	handle /mcp {
-		reverse_proxy wodcare-api:8787
+		reverse_proxy sorebody-api:8787
 	}
 
 	# Чат со справочником, тот же бэкенд. Реплика -- до 1 000 символов, тело с запасом 8 КБ.
@@ -31,10 +31,10 @@ sorebody.aimuzov.online {
 	}
 
 	handle /api/chat {
-		reverse_proxy wodcare-api:8787
+		reverse_proxy sorebody-api:8787
 	}
 
 	handle {
-		reverse_proxy wodcare:80
+		reverse_proxy sorebody:80
 	}
 }
