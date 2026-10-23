@@ -34,16 +34,17 @@ flowchart LR
 
 ## Сайты
 
-| Домен                                                        | Проект                                                                                              | Контейнеры                                   |
-| ------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| [tatiana-shkatova.ru](https://tatiana-shkatova.ru)           | [aimuzov-projects/shkatova-psychologist](https://github.com/aimuzov-projects/shkatova-psychologist) | `shkatova-psychologist`, `shkatova-chat`     |
-| [taplist.aimuzov.online](https://taplist.aimuzov.online)     | [aimuzov-projects/community-taplist](https://github.com/aimuzov-projects/community-taplist)         | `community-taplist`, `community-taplist-api` |
-| [codenames.aimuzov.online](https://codenames.aimuzov.online) | [aimuzov-projects/codenames](https://github.com/aimuzov-projects/codenames)                         | `codenames`, `codenames-relay`               |
-| [logist.aimuzov.online](https://logist.aimuzov.online)       | [aimuzov-projects/prestige-logist](https://github.com/aimuzov-projects/prestige-logist)             | `prestige-logist`, `prestige-logist-api`     |
-| [sublya.aimuzov.online](https://sublya.aimuzov.online)       | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya)                               | `sublya-site`, `sublya-tunnel`               |
-| [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online)   | [lazyvimx/site](https://github.com/lazyvimx/site)                                                   | `lazyvimx-site`                              |
-| [wodlog.aimuzov.online](https://wodlog.aimuzov.online)       | [aimuzov-projects/wodlog](https://github.com/aimuzov-projects/wodlog)                               | `wodlog`, `wodlog-api`                       |
-| [sorebody.aimuzov.online](https://sorebody.aimuzov.online)   | [aimuzov-projects/wodcare](https://github.com/aimuzov-projects/wodcare)                             | `wodcare`, `wodcare-api`                     |
+| Домен                                                          | Проект                                                                                              | Контейнеры                                   |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| [tatiana-shkatova.ru](https://tatiana-shkatova.ru)             | [aimuzov-projects/shkatova-psychologist](https://github.com/aimuzov-projects/shkatova-psychologist) | `shkatova-psychologist`, `shkatova-chat`     |
+| [taplist.aimuzov.online](https://taplist.aimuzov.online)       | [aimuzov-projects/community-taplist](https://github.com/aimuzov-projects/community-taplist)         | `community-taplist`, `community-taplist-api` |
+| [codenames.aimuzov.online](https://codenames.aimuzov.online)   | [aimuzov-projects/codenames](https://github.com/aimuzov-projects/codenames)                         | `codenames`, `codenames-relay`               |
+| [logist.aimuzov.online](https://logist.aimuzov.online)         | [aimuzov-projects/prestige-logist](https://github.com/aimuzov-projects/prestige-logist)             | `prestige-logist`, `prestige-logist-api`     |
+| [sublya.aimuzov.online](https://sublya.aimuzov.online)         | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya)                               | `sublya-site`, `sublya-tunnel`               |
+| [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online)     | [lazyvimx/site](https://github.com/lazyvimx/site)                                                   | `lazyvimx-site`                              |
+| [wodlog.aimuzov.online](https://wodlog.aimuzov.online)         | [aimuzov-projects/wodlog](https://github.com/aimuzov-projects/wodlog)                               | `wodlog`, `wodlog-api`                       |
+| [sorebody.aimuzov.online](https://sorebody.aimuzov.online)     | [aimuzov-projects/wodcare](https://github.com/aimuzov-projects/wodcare)                             | `wodcare`, `wodcare-api`                     |
+| [thinks-mcp.aimuzov.online](https://thinks-mcp.aimuzov.online) | [aimuzov/thinks-mcp](https://github.com/aimuzov/thinks-mcp)                                         | `thinks-mcp`                                 |
 
 ## Что где лежит
 
@@ -184,7 +185,7 @@ services:
   app:
     environment:
       HTTPS_PROXY: http://vpn:3128
-      NODE_USE_ENV_PROXY: '1' # только для Node 24+: без этого fetch прокси не видит
+      NODE_USE_ENV_PROXY: "1" # только для Node 24+: без этого fetch прокси не видит
     networks:
       - vpn
 
