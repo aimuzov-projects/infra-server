@@ -34,6 +34,11 @@ sorebody.aimuzov.online {
 		reverse_proxy sorebody-api:8787
 	}
 
+	# Здоровье бэкенда, по нему деплой сайта проверяет API. Отвечает только `ok`.
+	handle /api/health {
+		reverse_proxy sorebody-api:8787
+	}
+
 	handle {
 		reverse_proxy sorebody:80
 	}
