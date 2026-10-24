@@ -12,6 +12,12 @@ codenames.aimuzov.online {
 		reverse_proxy codenames-relay:8787
 	}
 
+	# Релей отвечает 200 на любой HTTP-запрос,
+	# по этому адресу деплой проверяет, что он поднялся.
+	handle /api/health {
+		reverse_proxy codenames-relay:8787
+	}
+
 	handle {
 		reverse_proxy codenames:80
 	}
