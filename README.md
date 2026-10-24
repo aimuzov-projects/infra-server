@@ -8,11 +8,11 @@
 </p>
 
 <p align="center">
-	<a href="https://github.com/aimuzov-projects/infra-server/actions/workflows/deploy.yml"><img src="https://img.shields.io/github/actions/workflow/status/aimuzov-projects/infra-server/deploy.yml?branch=main&label=deploy" alt="Deploy"></a>
+	<a href="https://github.com/aimuzov/infra-server/actions/workflows/deploy.yml"><img src="https://img.shields.io/github/actions/workflow/status/aimuzov/infra-server/deploy.yml?branch=main&label=deploy" alt="Deploy"></a>
 	<a href="https://caddyserver.com"><img src="https://img.shields.io/badge/Caddy-2.10-1f88c0?logo=caddy&logoColor=white" alt="Caddy"></a>
 	<a href="https://github.com/XTLS/Xray-core"><img src="https://img.shields.io/badge/Xray-26.9-555" alt="Xray"></a>
 	<a href="https://docs.docker.com/compose/"><img src="https://img.shields.io/badge/Docker-Compose-2496ed?logo=docker&logoColor=white" alt="Docker Compose"></a>
-	<a href="LICENSE"><img src="https://img.shields.io/github/license/aimuzov-projects/infra-server" alt="License"></a>
+	<a href="LICENSE"><img src="https://img.shields.io/github/license/aimuzov/infra-server" alt="License"></a>
 </p>
 
 <h3 align="center">Shared Caddy front door and VPN egress for a small projects server</h3>
@@ -34,17 +34,17 @@ flowchart LR
 
 ## Sites
 
-| Domain                                                         | Project                                                                                             | Containers                                   |
-| -------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| [tatiana-shkatova.ru](https://tatiana-shkatova.ru)             | [aimuzov-projects/shkatova-psychologist](https://github.com/aimuzov-projects/shkatova-psychologist) | `shkatova-psychologist`, `shkatova-chat`     |
-| [taplist.aimuzov.online](https://taplist.aimuzov.online)       | [aimuzov-projects/community-taplist](https://github.com/aimuzov-projects/community-taplist)         | `community-taplist`, `community-taplist-api` |
-| [codenames.aimuzov.online](https://codenames.aimuzov.online)   | [aimuzov-projects/codenames](https://github.com/aimuzov-projects/codenames)                         | `codenames`, `codenames-relay`               |
-| [logist.aimuzov.online](https://logist.aimuzov.online)         | [aimuzov-projects/prestige-logist](https://github.com/aimuzov-projects/prestige-logist)             | `prestige-logist`, `prestige-logist-api`     |
-| [sublya.aimuzov.online](https://sublya.aimuzov.online)         | [aimuzov-projects/sublya](https://github.com/aimuzov-projects/sublya)                               | `sublya-site`, `sublya-tunnel`               |
-| [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online)     | [lazyvimx/site](https://github.com/lazyvimx/site)                                                   | `lazyvimx-site`                              |
-| [wodlog.aimuzov.online](https://wodlog.aimuzov.online)         | [aimuzov-projects/wodlog](https://github.com/aimuzov-projects/wodlog)                               | `wodlog`, `wodlog-api`                       |
-| [sorebody.aimuzov.online](https://sorebody.aimuzov.online)     | [aimuzov-projects/sorebody](https://github.com/aimuzov-projects/sorebody)                           | `sorebody`, `sorebody-api`                   |
-| [thinks-mcp.aimuzov.online](https://thinks-mcp.aimuzov.online) | [aimuzov/thinks-mcp](https://github.com/aimuzov/thinks-mcp)                                         | `thinks-mcp`                                 |
+| Domain                                                         | Project                                                                           | Containers                                   |
+| -------------------------------------------------------------- | --------------------------------------------------------------------------------- | -------------------------------------------- |
+| [tatiana-shkatova.ru](https://tatiana-shkatova.ru)             | [aimuzov/shkatova-psychologist](https://github.com/aimuzov/shkatova-psychologist) | `shkatova-psychologist`, `shkatova-chat`     |
+| [taplist.aimuzov.online](https://taplist.aimuzov.online)       | [aimuzov/community-taplist](https://github.com/aimuzov/community-taplist)         | `community-taplist`, `community-taplist-api` |
+| [codenames.aimuzov.online](https://codenames.aimuzov.online)   | [aimuzov/codenames](https://github.com/aimuzov/codenames)                         | `codenames`, `codenames-relay`               |
+| [logist.aimuzov.online](https://logist.aimuzov.online)         | [aimuzov/prestige-logist](https://github.com/aimuzov/prestige-logist)             | `prestige-logist`, `prestige-logist-api`     |
+| [sublya.aimuzov.online](https://sublya.aimuzov.online)         | [aimuzov/sublya](https://github.com/aimuzov/sublya)                               | `sublya-site`, `sublya-tunnel`               |
+| [lazyvimx.aimuzov.online](https://lazyvimx.aimuzov.online)     | [lazyvimx/site](https://github.com/lazyvimx/site)                                 | `lazyvimx-site`                              |
+| [wodlog.aimuzov.online](https://wodlog.aimuzov.online)         | [aimuzov/wodlog](https://github.com/aimuzov/wodlog)                               | `wodlog`, `wodlog-api`                       |
+| [sorebody.aimuzov.online](https://sorebody.aimuzov.online)     | [aimuzov/sorebody](https://github.com/aimuzov/sorebody)                           | `sorebody`, `sorebody-api`                   |
+| [thinks-mcp.aimuzov.online](https://thinks-mcp.aimuzov.online) | [aimuzov/thinks-mcp](https://github.com/aimuzov/thinks-mcp)                       | `thinks-mcp`                                 |
 
 ## Repository layout
 
@@ -209,7 +209,7 @@ docker run --rm --network vpn curlimages/curl -sx http://vpn:3128 https://www.cl
 2. Firewall: `ufw allow 22/tcp`, `ufw allow 80/tcp`, `ufw allow 443` (TCP and UDP for HTTP/3).
 3. Networks: `docker network create edge` and `docker network create vpn`.
 4. Deploy key for this repo (see [Adding a project](#adding-a-project)), then
-   `git clone github-infra-server:aimuzov-projects/infra-server.git /srv/infra-server`.
+   `git clone github-infra-server:aimuzov/infra-server.git /srv/infra-server`.
 5. `/srv/infra-server/.env` from [`.env.example`](.env.example), then run `deploy/remote.sh` once.
 6. Shell: root gets fish from [dotfiles](https://github.com/aimuzov/dotfiles/blob/main/docs/fish/README.md#linux-server),
    bash stays the login shell and an interactive SSH login switches to fish. Install the
