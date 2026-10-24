@@ -169,7 +169,7 @@ docker run --rm -it caddy:2.10-alpine caddy hash-password
 5. Добавить `sites/<project>.caddy` с `import common` и `reverse_proxy <container_name>:<port>`,
    направить DNS домена на сервер и запушить `main`. `common` ставит заголовки безопасности,
    собственный `Permissions-Policy` сайта важнее, см. [`codenames.caddy`](sites/codenames.caddy).
-6. Первая сборка: запустить Deploy сайта вручную или `ssh projects /srv/infra-server/deploy/site.sh <project>`.
+6. Первая сборка: запустить Release сайта вручную или `ssh projects /srv/infra-server/deploy/site.sh <project>`.
 
 ## VPN-выход
 

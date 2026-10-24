@@ -170,7 +170,7 @@ docker run --rm -it caddy:2.10-alpine caddy hash-password
 5. Add `sites/<project>.caddy` with `import common` and `reverse_proxy <container_name>:<port>`,
    point the domain's DNS at the server and push to `main`. `common` sets the security headers,
    a site's own `Permissions-Policy` wins over it, see [`codenames.caddy`](sites/codenames.caddy).
-6. The first build: run the site's Deploy by hand or `ssh projects /srv/infra-server/deploy/site.sh <project>`.
+6. The first build: run the site's Release by hand or `ssh projects /srv/infra-server/deploy/site.sh <project>`.
 
 ## VPN egress
 
