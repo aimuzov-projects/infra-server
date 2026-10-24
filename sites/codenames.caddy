@@ -1,4 +1,4 @@
-# Игра Codenames, репо aimuzov-projects/codenames, на сервере в /srv/codenames.
+# Игра Codenames, репо aimuzov/codenames, на сервере в /srv/codenames.
 
 codenames.aimuzov.online {
 	import common
